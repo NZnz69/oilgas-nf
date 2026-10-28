@@ -1,0 +1,65 @@
+{
+  "name": "oilgas-nf",
+  "display_name": "油气储运 NF 智能辅助系统",
+  "version": "0.1.1",
+  "stage": "阶段1-机制框架（白盒空库，已实机启用验证）",
+  "platform": "TeleAgent Desktop（星辰超级智能体）",
+  "requires": {
+    "python": ">=3.10",
+    "mcp_sdk": ">=2.0.0",
+    "teleagent_desktop": "已安装并登录"
+  },
+  "components": {
+    "skill": {
+      "source": "skill/oilgas-nf-expert",
+      "install_target": "%TELEAGENT_CONFIG_DIR%/skills/oilgas-nf-expert",
+      "knowledge_base_status": "白盒空置（0 张卡片，待真实文件灌入）"
+    },
+    "engine": {
+      "source": "engine",
+      "entry": "engine/run.py",
+      "transport": "stdio",
+      "tools": ["unit_convert", "pipe_hydraulic", "pipe_temperature_drop", "pipe_wall_thickness", "list_dimensions"],
+      "verification": "selftest 12/12 通过；e2e MCP 协议链路通过"
+    },
+    "baselines": {
+      "source": "data/baselines/baselines.json",
+      "cases": 5,
+      "note": "当前为手工预核算例，待教材例题替换"
+    },
+    "jobs": {
+      "source": "jobs/daily-task.json",
+      "note": "每日五件事任务定义，阶段4经平台 scheduler 注册"
+    },
+    "identity": {
+      "source": "identity/identity-template.md",
+      "note": "身份四选一模板，安装或首次使用时由用户选择"
+    }
+  },
+  "install": {
+    "windows": "powershell -ExecutionPolicy Bypass -File install.ps1",
+    "manual": "见 README.md「安装」章节"
+  },
+  "changelog": {
+    "0.1.1": [
+      "实机启用验证通过：Skill 加载、MCP 连接、基准题计算与手算一致、量纲防御返回结构化错误",
+      "修复引擎 BUG：计算书多判据互相覆盖只留最后一条（set_judgement 改为 judgements 数组追加）",
+      "水力压降结果直接附带 Pa 与 MPa 双单位",
+      "SKILL.md 新增呈现与翻译规则：计算书提炼呈现、单位别名翻译职责、黏度必须先问类型（厘泊cP动力/厘斯cSt运动易混）",
+      "新增 references/unit-aliases.md 单位别名翻译表（接口约定，非专业知识）",
+      "install.ps1 发行加固：Python 不在 PATH 时回退探测 TeleAgent 内置运行时；技能目录自动探测 users/*/skills；MCP JSON 使用探测到的 Python 路径",
+      "新增 docs/ 设计文档目录，发行包自包含"
+    ],
+    "0.1.0": [
+      "阶段1机制框架：Skill+引擎+白盒知识库+一键安装",
+      "自测捕获并修复三个真实 BUG：腐蚀裕量双重累加、壁厚结果单位标错、server 导入笔误",
+      "install.ps1 真实跑通（含 UTF-8 BOM 修复 PS5.1 中文解析）"
+    ]
+  },
+  "honesty_notes": [
+    "公式溯源状态均为「待校核」：公式形式为教科书通用公式，条文出处待公式卡片收录后绑定",
+    "判据区间未入库：无 formulas/judges.json 时所有计算不判定合理区间（如实标注未收录）",
+    "基准题为手工预核算例：待教材例题收录后逐题替换",
+    "知识库白盒空置是设计行为：未收录即拒答，拒绝用模型记忆编造专业内容"
+  ]
+}

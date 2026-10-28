@@ -1,0 +1,1414 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>油气储运「NF」智能辅助系统：多角色痛点汇总与解决方案对照</title>
+<style>
+/* ========== Reset & Base ========== */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { min-height: 100%; }
+body {
+  position: relative;
+  font-family: -apple-system, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "Segoe UI", "Noto Sans SC", sans-serif;
+  color: #1f2d3d;
+  line-height: 1.7;
+  -webkit-font-smoothing: antialiased;
+  max-width: 860px;
+  margin: 0 auto;
+  padding: 40px 24px;
+  background: linear-gradient(160deg, #f8fafc 0%, #ffffff 45%, #cfe0f5 100%);
+  min-height: 100vh;
+}
+/* 全局光斑：两个白色 radial 光晕，营造页面呼吸感（纯装饰，转换时忽略） */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(ellipse 45% 35% at 12% 8%, rgba(255,255,255,0.55) 0%, transparent 60%),
+    radial-gradient(ellipse 40% 30% at 88% 90%, rgba(255,255,255,0.45) 0%, transparent 55%);
+}
+body > * { position: relative; z-index: 1; }
+
+/* ========== 封面 Hero（深色渐变 + 光斑 + 白字） ========== */
+.title {
+  position: relative;
+  overflow: hidden;
+  padding: 56px 40px;
+  text-align: center;
+  background: linear-gradient(135deg, #1e3a5f 0%, #3b82f6 50%, #4f8ef7 100%);
+  color: #ffffff;
+  border-radius: 16px;
+  margin-bottom: 24px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.12);
+}
+.title::before {
+  content: '';
+  position: absolute; inset: 0;
+  background:
+    radial-gradient(ellipse 70% 55% at 18% 82%, rgba(255,255,255,0.12) 0%, transparent 60%),
+    radial-gradient(ellipse 55% 40% at 82% 18%, rgba(255,255,255,0.08) 0%, transparent 55%);
+  pointer-events: none;
+}
+.title > * { position: relative; z-index: 1; }
+.title h1 { font-size: 28px; font-weight: 800; margin: 0 0 14px 0; letter-spacing: 1px; color: #ffffff; }
+.title .accent-line {
+  width: 48px; height: 3px; background: rgba(255,255,255,0.85);
+  margin: 0 auto 18px; border-radius: 2px;
+}
+.title p { font-size: 15px; color: rgba(255,255,255,0.85); margin: 0; line-height: 1.7; }
+.title .badge-row { margin-top: 18px; }
+.title .badge {
+  display: inline-block;
+  margin: 4px 5px;
+  padding: 4px 14px;
+  font-size: 12px;
+  letter-spacing: 1px;
+  color: rgba(255,255,255,0.95);
+  border: 1px solid rgba(255,255,255,0.4);
+  border-radius: 20px;
+  background: rgba(255,255,255,0.12);
+}
+
+/* ========== 章节标题 ========== */
+h1.heading {
+  font-size: 28px;
+  color: #0f1e33;
+  margin: 36px 0 16px 0;
+  font-weight: 700;
+  border-left: 4px solid #3b82f6;
+  padding-left: 16px;
+}
+h2.heading {
+  font-size: 22px;
+  color: #0f1e33;
+  margin: 28px 0 12px;
+  padding-bottom: 8px;
+  border-bottom: 2px solid #c9d6f3;
+  font-weight: 600;
+}
+
+/* ========== 正文 / 列表 ========== */
+.paragraph { font-size: 15px; color: #1f2d3d; line-height: 1.8; margin: 0 0 16px 0; text-indent: 2em; }
+.paragraph.no-indent { text-indent: 0; }
+.list { margin: 0 0 16px 0; padding-left: 24px; font-size: 15px; color: #1f2d3d; line-height: 1.8; }
+.list li { margin-bottom: 8px; }
+.list li::marker { color: #3b82f6; }
+
+/* ========== 正文区卡片化容器 ========== */
+.doc-section {
+  background: #ffffff;
+  border-radius: 14px;
+  padding: 24px 28px;
+  margin: 0 0 16px 0;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.05);
+}
+.doc-section.alt { background: #e6edf6; box-shadow: none; }
+
+/* ========== callout ========== */
+.callout {
+  margin: 0 0 16px 0;
+  padding: 16px 24px;
+  background: #e8f0fe;
+  border-left: 4px solid #3b82f6;
+  border-radius: 8px;
+}
+.callout[data-variant="warning"] { background: #FFF3E0; border-left-color: #d97706; }
+.callout[data-variant="quote"]   { background: #f0fdfa; border-left-color: #14b8a6; }
+.callout p { font-size: 15px; color: #1f2d3d; margin: 0; line-height: 1.8; }
+.callout p + p { margin-top: 8px; }
+.callout strong { color: #0f1e33; }
+
+/* ========== 表格 ========== */
+.table-wrap {
+  background: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.05);
+  overflow: hidden;
+  margin: 0 0 16px 0;
+}
+.table-caption {
+  padding: 12px 16px;
+  background: linear-gradient(135deg, #c9d6f3, #e8f0fe);
+  color: #0f1e33;
+  font-size: 14px;
+  font-weight: 600;
+  text-align: center;
+  border-bottom: 1px solid #dbe4ef;
+}
+table.table { width: 100%; border-collapse: collapse; font-size: 14px; table-layout: fixed; }
+table.table thead th {
+  padding: 10px 14px;
+  text-align: left;
+  background: #c9d6f3;
+  color: #0f1e33;
+  font-weight: 700;
+  border-bottom: 2px solid #dbe4ef;
+  word-break: break-word;
+}
+table.table tbody td { padding: 10px 14px; border-bottom: 1px solid #dbe4ef; color: #1f2d3d; word-break: break-word; line-height: 1.7; }
+table.table tbody td strong { color: #0f1e33; }
+table.table tbody td .td-tag { color: #2563eb; }
+table.table tbody td .gain { color: #2E7D32; font-weight: 600; }
+table.table tbody tr:last-child td { border-bottom: none; }
+table.table tbody tr:hover { background: #eef5ff; }
+
+/* ========== stat ========== */
+.stat-grid { display: flex; gap: 16px; margin: 0 0 16px 0; }
+.stat {
+  flex: 1;
+  text-align: center;
+  padding: 24px;
+  background: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+  border-top: 3px solid #3b82f6;
+}
+.stat .num { font-size: 28px; color: #3b82f6; font-weight: 800; line-height: 1.1; }
+.stat .label { font-size: 12px; color: #5b6b80; margin-top: 6px; }
+
+/* ========== timeline ========== */
+.timeline { list-style: none; padding: 0; margin: 0 0 16px 0; }
+.timeline li {
+  position: relative;
+  padding-left: 28px;
+  padding-bottom: 18px;
+  border-left: 2px solid #e8f0fe;
+  margin-left: 6px;
+}
+.timeline li:last-child { border-left-color: transparent; padding-bottom: 0; }
+.timeline li::before {
+  content: '';
+  position: absolute;
+  left: -7px; top: 5px;
+  width: 12px; height: 12px;
+  border-radius: 50%;
+  background: #3b82f6;
+  border: 2px solid #f4f7fb;
+  box-shadow: 0 0 0 2px #e8f0fe;
+}
+.timeline strong { font-size: 14px; color: #2563eb; }
+.timeline p { font-size: 15px; color: #1f2d3d; margin: 4px 0 0 0; line-height: 1.8; }
+
+/* ========== card ========== */
+.card-grid { display: flex; gap: 16px; margin: 0 0 16px 0; }
+.card {
+  flex: 1;
+  background: #ffffff;
+  padding: 24px;
+  border-radius: 12px;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+  border-top: 3px solid #3b82f6;
+}
+.card h3 { font-size: 18px; color: #0f1e33; margin: 0 0 8px 0; font-weight: 700; }
+.card p  { font-size: 14px; color: #5b6b80; margin: 0; line-height: 1.7; }
+.card p strong { color: #2563eb; }
+
+/* ========== divider: 章节饰线（居中饰点分隔线） ========== */
+.divider { margin: 32px 0; text-align: center; user-select: none; }
+.divider .line {
+  display: inline-block;
+  width: 36px;
+  height: 1px;
+  vertical-align: middle;
+  background: linear-gradient(to right, transparent, #e8f0fe);
+}
+.divider .line:last-child { background: linear-gradient(to left, transparent, #e8f0fe); }
+.divider .diamond {
+  display: inline-block;
+  width: 8px; height: 8px;
+  margin: 0 12px;
+  vertical-align: middle;
+  transform: rotate(45deg);
+  background: #3b82f6;
+  border-radius: 1px;
+  box-shadow: 0 0 0 2px #f4f7fb;
+}
+
+/* ========== 尾页 ========== */
+.end_page {
+  margin-top: 24px;
+  padding: 56px 24px;
+  text-align: center;
+  background: linear-gradient(135deg, #c9d6f3 0%, #e8f0fe 100%);
+  border-radius: 16px;
+}
+.end_page h1 { font-size: 28px; color: #0f1e33; margin: 0 0 16px 0; font-weight: 800; }
+.end_page p  { font-size: 15px; color: #5b6b80; margin: 0; line-height: 1.8; }
+
+/* ========== 响应式 ========== */
+@media screen and (max-width: 600px) {
+  body { padding: 16px !important; }
+  h1 { font-size: 22px !important; }
+  h2 { font-size: 18px !important; }
+  h3 { font-size: 16px !important; }
+  .stat-grid, .card-grid { flex-direction: column; }
+}
+
+/* ========== 打印优化 ========== */
+@media print {
+  body {
+    padding: 0 !important;
+    margin: 0 !important;
+    background: #f4f7fb;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+  body::before { display: none; }
+  .title, .end_page { border-radius: 0; box-shadow: none; }
+  .doc-section, .card, .stat, .table-wrap { box-shadow: none; border: 1px solid #dbe4ef; }
+  section { break-inside: auto !important; }
+}
+</style>
+</head>
+<body class="mode-doc" data-palette="ink-blue">
+
+  <!-- ===== 封面 ===== -->
+  <section class="title">
+    <h1>油气储运「NF」智能辅助系统</h1>
+    <div class="accent-line"></div>
+    <p>四类角色痛点全景汇总 · 传统方法对照 · NF 解决方案 · 立项前需求基线</p>
+    <div class="badge-row">
+      <span class="badge">学生</span>
+      <span class="badge">教师</span>
+      <span class="badge">场站运维</span>
+      <span class="badge">工程设计</span>
+    </div>
+  </section>
+
+  <!-- ===== 一、NF 定位 ===== -->
+  <h1 class="heading" data-level="1">一、NF 定位：从痛点汇总到解决机制</h1>
+
+  <div class="doc-section">
+    <p class="paragraph">本文所称 <strong>NF</strong>，是拟与星辰智能体（TeleAgent）桌面端深度绑定的油气储运专业智能辅助系统的工作简称。其推荐形态为三层结构：<strong>专家 Skill</strong> 承担<strong>身份先行路由</strong>（首次使用先询问身份，主推相关、次推其余，随时可切换）与工作流组织，<strong>本地知识库</strong> 承载规范、公式、设备、介质与案例卡片（内容全部来自用户提供的真实文件与官方正版渠道），<strong>确定性计算引擎（MCP 服务）</strong> 负责数值计算与量纲校验，全部在本地桌面环境运行、资料不出电脑；并由<strong>每日定时任务</strong>驱动数据库自检、行业动态跟踪与国标版本自动切换，<strong>每次任务运行自动生成一份鲜明直观的 HTML 更新报告</strong>并逐日归档。数据库采用<strong>双库架构</strong>：专业知识库承载规范、公式、设备、介质与案例卡片，事件库按可信度分级收录国内外时事动态——两库物理独立、互不污染，又通过严格单向的联动机制互通。</p>
+    <p class="paragraph">本文汇总四类角色在真实学习与工作中遇到的全部痛点，逐项对照「传统方法的困境」与「NF 的解决方式」，说明效率与准确性提升的来源，作为后续立项与分期建设的需求基线。</p>
+  </div>
+
+  <aside class="callout" data-variant="tip">
+    <p><strong>数据真实性第一原则：只信文件，不信记忆。</strong>NF 的可信建立在三重真实之上——<strong>事实真实</strong>：知识库从零构建（白盒启动，不预置任何模型记忆生成的内容），每张卡片必须携带文件溯源信息，未收录的问题明确拒答；<strong>计算真实</strong>：数值全部由确定性引擎按真实计算逻辑执行，公式溯源、基准回归、失败即报错，模型从不产生数值；<strong>版本真实</strong>：新旧版本共存不删除，引用永远默认最新现行版，新国标实施首日自动切换，历史版本永久可查。模型记忆只用于理解、组织与解释，从不用于事实断言，从架构上杜绝「貌似合理的编造」。</p>
+  </aside>
+
+  <div class="stat-grid">
+    <div class="stat">
+      <div class="num">4</div>
+      <div class="label">覆盖角色：学生 / 教师 / 运维 / 设计</div>
+    </div>
+    <div class="stat">
+      <div class="num">26</div>
+      <div class="label">痛点簇：全场景逐一对照解法</div>
+    </div>
+    <div class="stat">
+      <div class="num">9</div>
+      <div class="label">核心机制支撑解法落地</div>
+    </div>
+    <div class="stat">
+      <div class="num">5</div>
+      <div class="label">反幻觉防线：只信文件</div>
+    </div>
+    <div class="stat">
+      <div class="num">4</div>
+      <div class="label">计算闸门：不乱给结果</div>
+    </div>
+  </div>
+
+  <div class="stat-grid">
+    <div class="stat">
+      <div class="num">1次/天</div>
+      <div class="label">定时自检，每次生成 HTML 报告</div>
+    </div>
+    <div class="stat">
+      <div class="num">当日</div>
+      <div class="label">新国标实施首日自动切换</div>
+    </div>
+    <div class="stat">
+      <div class="num">永久</div>
+      <div class="label">历史版本留存可查不删除</div>
+    </div>
+    <div class="stat">
+      <div class="num">2</div>
+      <div class="label">独立数据库：专业库 + 事件库</div>
+    </div>
+    <div class="stat">
+      <div class="num">0</div>
+      <div class="label">预置记忆内容（白盒启动）</div>
+    </div>
+  </div>
+
+  <div class="doc-section alt">
+    <p class="paragraph no-indent"><strong>NF 与传统方法的七条本质差异：</strong></p>
+    <ul class="list">
+      <li><strong>从「人记规范」到「卡片查规范」</strong>——规范编号、现行版本、替代链、适用范围全部结构化为卡片，版本状态自动核对，不再依赖个人记忆的可靠性。</li>
+      <li><strong>从「人套公式」到「引擎算公式」</strong>——雷诺数、沿程阻力、压降、温降、水击、储罐损耗、阴保计算交由确定性引擎执行，量纲强制校验，结果自动对照入库判据区间并告警。</li>
+      <li><strong>从「人盯变更、口传经验」到「任务盯、卡片传」</strong>——规范更新由定时任务监控推送；现场经验按结构化卡片沉淀复用，不随人员流动流失。</li>
+      <li><strong>从「模型记忆」到「文件事实」</strong>——所有规范条文、参数区间、案例细节只来自用户提供的真实文件，逐条可回原文核对；模型记忆仅用于理解与组织，不作为事实来源。</li>
+      <li><strong>从「静态资料袋」到「每日自检的活库」</strong>——官方正版持续收录、新旧版本共存、每日自检与行业跟踪，知识库随国标演进而迭代，而非一次性建成后逐渐过时。</li>
+      <li><strong>从「真假混杂的单库」到「隔离联动的双库」</strong>——专业结论只出自校核转正的专业库；时事真假都收但分级标注、辟谣可追溯，存疑信息进不了专业判断。</li>
+      <li><strong>从「千人一面」到「身份先行」</strong>——首次使用先询问身份，主推该身份相关场景、次推其余可及，一句话随时切换；同一系统对学生给引导、对教师给模板、对现场给速查。</li>
+    </ul>
+  </div>
+
+  <!-- ===== 二、学生场景 ===== -->
+  <h1 class="heading" data-level="1">二、学生场景：痛点与解决方案</h1>
+
+  <p class="paragraph">油储专业学生在课程学习、实验、课程设计与毕业设计中，长期受困于规范体系庞杂、公式理解浅表化、资料分散三类结构性问题。本章按「日常学习」与「实践环节」两部分汇总，共 8 项痛点簇。</p>
+
+  <h2 class="heading" data-level="2">2.1 日常学习：规范、公式、物性、设备与备考</h2>
+
+  <div class="table-wrap">
+    <div class="table-caption">表 1 学生 · 日常学习痛点与 NF 解法对照</div>
+    <table class="table" data-caption="表 1 学生 · 日常学习痛点与 NF 解法对照">
+      <colgroup>
+        <col style="width:13%">
+        <col style="width:30%">
+        <col style="width:39%">
+        <col style="width:18%">
+      </colgroup>
+      <thead>
+        <tr>
+          <th>痛点场景</th>
+          <th>传统方法的困境</th>
+          <th>NF 的解决方式</th>
+          <th>效率与准确性提升</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>规范定位与版本辨析</strong></td>
+          <td>GB/T 9711、GB 50251、GB 50369 及各类 SY/T 系列标准条文定位耗时；版本新旧难辨、适用工况不清；讲义、例题与工程案例分散在各类资料中，查找比对成本高。</td>
+          <td>规范卡片含<strong>编号、现行版本、替代链、适用工况、强条要点</strong>与官方查阅渠道；按任务关键词直达对应条文要点，相关例题与案例卡片联动调出。</td>
+          <td><span class="gain">条文定位小时级→分钟级；版本误用由状态链拦截</span></td>
+        </tr>
+        <tr>
+          <td><strong>公式理解与计算</strong></td>
+          <td>雷诺数、沿程阻力、管道压降、温降、水击、储罐损耗、阴保等公式只能机械套用；参数物理意义不清、量纲混淆；流态与适用工况判断失准；算完无法判断数值是否符合工程合理区间。</td>
+          <td>公式卡片逐参数解释<strong>物理意义、量纲表、适用流态与工况</strong>；计算交由确定性引擎执行，强制量纲校验，结果自动对照工程合理区间并给出告警与解释。</td>
+          <td><span class="gain">量纲错误提交前拦截；每个结果附带判据</span></td>
+        </tr>
+        <tr>
+          <td><strong>介质物性记忆混淆</strong></td>
+          <td>原油、成品油、液化石油气、天然气、LNG、CNG 的密度、黏度、饱和蒸气压、闪点、爆炸极限随温度压力变化，记忆与区分困难。</td>
+          <td>介质物性卡按<strong>介质 × 参数</strong>组织，标注随温压变化趋势与典型区间；计算时由引擎统一调用与换算，杜绝跨介质参数串用。</td>
+          <td><span class="gain">随查随用，参数不再张冠李戴</span></td>
+        </tr>
+        <tr>
+          <td><strong>场站设备认知断裂</strong></td>
+          <td>浮顶罐、拱顶罐、收发球筒、调压撬、计量撬、紧急切断阀、阻火器等大多只能靠课本图片了解，设备结构、实际功能、巡检要点、故障表现对应不起来，实习与现场认知不足。</td>
+          <td>设备档案卡整合<strong>结构原理、实际功能、巡检要点、典型故障表现</strong>，支持按设备名或故障现象双向检索，弥补现场认知缺口。</td>
+          <td><span class="gain">认知升级为「结构—功能—故障」闭环</span></td>
+        </tr>
+        <tr>
+          <td><strong>复习备考与知识串联</strong></td>
+          <td>期末复习、考研备考、学科竞赛需横跨流体力学、传热传质、腐蚀与防护、油气集输、安全工程、管网仿真多个方向；知识点零散难成体系，缺少章节自测、考点梳理与背诵素材。</td>
+          <td>基于卡片库按课程章节生成<strong>考点梳理、自测题与背诵要点</strong>；错题与薄弱点写入个人记忆，后续复习定向强化。</td>
+          <td><span class="gain">复习从「重新收集」变「定向强化」</span></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h2 class="heading" data-level="2">2.2 实践环节：课程设计、仿真与实验</h2>
+
+  <div class="table-wrap">
+    <div class="table-caption">表 2 学生 · 实践环节痛点与 NF 解法对照</div>
+    <table class="table" data-caption="表 2 学生 · 实践环节痛点与 NF 解法对照">
+      <colgroup>
+        <col style="width:13%">
+        <col style="width:30%">
+        <col style="width:39%">
+        <col style="width:18%">
+      </colgroup>
+      <thead>
+        <tr>
+          <th>痛点场景</th>
+          <th>传统方法的困境</th>
+          <th>NF 的解决方式</th>
+          <th>效率与准确性提升</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>课程设计与毕业设计</strong></td>
+          <td>输油管道、输气管道、油库、储罐、LNG 工艺、管网仿真任务流程复杂；管径、壁厚、管材、防腐方式、阴保方案、安全间距、试压方案选型无据可依；工艺流程、设备选型、图纸说明、规范引用与参考文献整理处处受阻。</td>
+          <td><strong>选型决策树</strong>逐节点推进（管径→壁厚→管材→防腐→阴保→安全间距→试压），每节点给出参考区间与选型依据；说明书模板内置规范引用与参考文献格式；分阶段检查清单自查。</td>
+          <td><span class="gain">从「无从下手」到「逐节点推进」；缺项漏项由清单兜底</span></td>
+        </tr>
+        <tr>
+          <td><strong>仿真软件上手与排错</strong></td>
+          <td>Aspen HYSYS、PipeFlow、SPS、OLGA 上手难度高；遇到报错无从排查；对仿真结果存疑时缺少可靠参考资料。</td>
+          <td><strong>常见报错知识库 + 建模检查单</strong>（建模思路、边界设置、收敛调试、结果判读）；结果与工程经验冲突时给出结构化排查顺序与修正方向。</td>
+          <td><span class="gain">排错路径化；结果判读有参照系</span></td>
+        </tr>
+        <tr>
+          <td><strong>实验预习、数据与报告</strong></td>
+          <td>流动阻力测定、油品物性检测、储罐蒸发损耗、腐蚀测试、流量计标定等实验，预习阶段抓不住原理、操作重点与潜在风险；实测数据离散、异常值难识别剔除；误差分析缺少思考方向；报告结构、图表规范、结论表述难把握。</td>
+          <td>实验卡覆盖<strong>原理要点、操作重点、风险提示</strong>；异常值识别流程（3σ、格拉布斯）与不确定度分析指引；标准化报告模板与图表规范前置统一。</td>
+          <td><span class="gain">数据取舍有方法依据；报告一次成型</span></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h2 class="heading" data-level="2">2.3 典型工作流示例：输油管道课程设计中的 NF</h2>
+
+  <div class="doc-section">
+    <p class="paragraph no-indent">以一次典型的输油管道课程设计为例，NF 将原本「翻规范—套公式—拼文档」的线性摸索过程，重构为八个可回溯的节点：</p>
+    <ol class="timeline">
+      <li>
+        <strong>① 任务解析</strong>
+        <p>识别设计任务类型、边界条件与已知参数，自动圈定适用的规范集合。</p>
+      </li>
+      <li>
+        <strong>② 规范锁定</strong>
+        <p>调取 GB 50369、GB/T 9711 等规范卡片，确认现行版本、适用范围与关键条文位置，杜绝误引过时版本。</p>
+      </li>
+      <li>
+        <strong>③ 参数初选</strong>
+        <p>按经济流速区间初选管径，决策树给出候选方案与取值依据。</p>
+      </li>
+      <li>
+        <strong>④ 确定性计算</strong>
+        <p>计算引擎完成水力、热力、强度校核，量纲校验与工程区间告警同步执行。</p>
+      </li>
+      <li>
+        <strong>⑤ 方案对比</strong>
+        <p>管径—压力等级—加热方案多维并列对比，附权衡要点与造价影响方向。</p>
+      </li>
+      <li>
+        <strong>⑥ 合规自查</strong>
+        <p>安全间距、试压方案、阴保方案逐项对照检查清单勾选，强制条文符合性核查。</p>
+      </li>
+      <li>
+        <strong>⑦ 文档生成</strong>
+        <p>输出说明书框架、规范引用列表与参考文献格式，图纸说明要点同步提示。</p>
+      </li>
+      <li>
+        <strong>⑧ 记忆沉淀</strong>
+        <p>本次选型参数与易错点写入个人记忆，下次同类任务自动带出，越用越贴合。</p>
+      </li>
+    </ol>
+  </div>
+
+  <div class="divider"><span class="line"></span><span class="diamond"></span><span class="line"></span></div>
+
+  <!-- ===== 三、教师场景 ===== -->
+  <h1 class="heading" data-level="1">三、教师场景：痛点与解决方案</h1>
+
+  <p class="paragraph">油气储运属小众工科方向，公开成熟的习题集、试题库与工程案例资源稀缺；资源建设与维护、跨年级重复答疑、多学生指导核查构成教师侧的三大压力源。本章汇总 5 项痛点簇。</p>
+
+  <div class="table-wrap">
+    <div class="table-caption">表 3 教师 · 教学与指导痛点与 NF 解法对照</div>
+    <table class="table" data-caption="表 3 教师 · 教学与指导痛点与 NF 解法对照">
+      <colgroup>
+        <col style="width:13%">
+        <col style="width:30%">
+        <col style="width:39%">
+        <col style="width:18%">
+      </colgroup>
+      <thead>
+        <tr>
+          <th>痛点场景</th>
+          <th>传统方法的困境</th>
+          <th>NF 的解决方式</th>
+          <th>效率与准确性提升</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>教学资源建设与维护</strong></td>
+          <td>习题集、试题库、工程案例稀缺，需持续整理例题、课程设计任务书及配套解析；每当国标或行业规范更新，讲义、课件、考核内容都要同步调整，维护工作量大且易漏。</td>
+          <td>资源按卡片体系组织、可复用；例题、任务书、解析由模板<strong>批量生成后人工校订</strong>；规范状态链变更时，定时任务推送受影响条目并定位关联讲义位置。</td>
+          <td><span class="gain">资源维护从「全面重查」变「定点更新」</span></td>
+        </tr>
+        <tr>
+          <td><strong>重复性答疑占用</strong></td>
+          <td>公式适用条件、规范版本辨析、课设参数选取、仿真报错排查等问题在不同年级反复出现，课堂难以讲透全部工程细节，课下答疑占用大量时间。</td>
+          <td>高频问题沉淀为<strong>标准卡片与清单</strong>供学生自助检索；新问法经一次解答后归档复用；个人记忆记录每个学生的易错点，答疑直击要害。</td>
+          <td><span class="gain">重复答疑时间释放为增量辅导</span></td>
+        </tr>
+        <tr>
+          <td><strong>设计指导与合规核查</strong></td>
+          <td>学生选取参数脱离工程经验、引用已过时规范、消防与安全间距不满足强制要求、仿真结果与工程经验冲突；设计说明书与图纸质量参差不齐；多名学生同时指导难以逐一核查方案合规性。</td>
+          <td>学生先走<strong>检查清单自查</strong>（参数区间、规范现行性、强制条文符合性、结果合理性），教师抽查清单状态即可定位风险项，逐份人工审读降级为清单抽查。</td>
+          <td><span class="gain">核查负荷下降，风险前移至学生自查阶段</span></td>
+        </tr>
+        <tr>
+          <td><strong>实验教学负担</strong></td>
+          <td>实验课学生数量多，数据处理、异常识别、报告批改以及实验故障排查都增加教师负担，逐份手工核算耗时。</td>
+          <td>学生按<strong>异常值识别流程与统一模板</strong>先行处理，格式性问题前置消除；实验故障排查走知识库路径，教师精力集中于判断与讲评。</td>
+          <td><span class="gain">批改聚焦「判断与讲评」而非格式纠错</span></td>
+        </tr>
+        <tr>
+          <td><strong>案例收集与备课支撑</strong></td>
+          <td>管网改造、LNG 接收站、储库建设、管道事故复盘等案例分散在文献、行业报告与内部资料中，收集、整理、脱敏并转化为教学素材周期很长；青年教师跨腐蚀、管网仿真、低温工艺、安全评价方向备课缺参考资料。</td>
+          <td>案例入库<strong>流程化</strong>（采集→整理→脱敏→标签化→教学素材转化），本地留存不外传；按细分方向关键词组装备课参考包，支撑跨领域备课。</td>
+          <td><span class="gain">案例转化周期缩短；备课有结构化素材底座</span></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <aside class="callout" data-variant="tip">
+    <p><strong>教师侧的核心收益</strong>：NF 把「逐年重复的答疑」与「逐份人工的核查」转化为可复用的卡片与清单资产——教师的时间从重复劳动转向增量辅导与内容校核，而校核后的卡片又反哺全年级使用，形成正向循环。</p>
+  </aside>
+
+  <!-- ===== 四、场站运维场景 ===== -->
+  <h1 class="heading" data-level="1">四、场站运维场景：痛点与解决方案</h1>
+
+  <p class="paragraph">场站与管道一线的核心矛盾是「故障表象相似而原因各异」与「标准条文繁多而现场记忆有限」，新员工误判与经验流失是高频风险。NF 从校园教学延伸到工业现场，覆盖巡检、阴保、检测、作业、应急、维保六类任务，本章汇总 6 项痛点簇。</p>
+
+  <div class="table-wrap">
+    <div class="table-caption">表 4 场站运维 · 一线作业痛点与 NF 解法对照</div>
+    <table class="table" data-caption="表 4 场站运维 · 一线作业痛点与 NF 解法对照">
+      <colgroup>
+        <col style="width:13%">
+        <col style="width:30%">
+        <col style="width:39%">
+        <col style="width:18%">
+      </colgroup>
+      <thead>
+        <tr>
+          <th>痛点场景</th>
+          <th>传统方法的困境</th>
+          <th>NF 的解决方式</th>
+          <th>效率与准确性提升</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>日常巡检与故障诊断</strong></td>
+          <td>管道外腐蚀、保温破损、介质泄漏、压力波动、仪表漂移、阀门卡滞等报警信号表象相似，背后的故障原因各不相同，新入职人员极易误判；故障排查路径与处置流程难以随时调取。</td>
+          <td>故障卡按<strong>「表象→可能原因→排查顺序→处置流程」</strong>组织，支持按现象关键词检索，现场随时调取对照。</td>
+          <td><span class="gain">排查从经验依赖变路径引导，误判风险下降</span></td>
+        </tr>
+        <tr>
+          <td><strong>阴极保护数据解读</strong></td>
+          <td>牺牲阳极、外加电流、参比电极、断电电位、密间隔检测等内容，欠保护、合理保护与过保护区间难以分清；交流干扰、杂散电流、土壤变化都增加数据解读难度；测试规范和判定标准不易全部记牢。</td>
+          <td>阴保判定卡内嵌<strong>判据区间与干扰修正要点</strong>，输入实测电位自动判定保护状态并提示可能的干扰源；阳极质量、所需电流密度等计算由引擎确定性完成。</td>
+          <td><span class="gain">判定有统一判据；解读有干扰对照框架</span></td>
+        </tr>
+        <tr>
+          <td><strong>清管与内检测</strong></td>
+          <td>清管方案设计、收发球风险管控、漏磁与超声内检测、管道缺陷分级与维修决策都依赖行业标准与工程经验，方案要点与评价依据分散。</td>
+          <td>清管作业要点卡 + 缺陷评价速查卡（<strong>评价依据与维修建议对应关系</strong>），快速查阅方案要点、缺陷分级依据与维修决策参考。</td>
+          <td><span class="gain">决策链条缩短，依据随查随得</span></td>
+        </tr>
+        <tr>
+          <td><strong>高危作业安全管理</strong></td>
+          <td>动火、受限空间、高处、挖掘、试压、盲板抽堵等作业需要完整的风险辨识、安全约束与作业票办理指引；不同作业对应的防护、隔离、泄压要求繁多，现场作业容易遗漏潜在隐患。</td>
+          <td>作业卡按作业类型给出<strong>风险辨识清单、安全约束、作业票流程与禁忌提示</strong>，逐项勾选核查，交底标准化。</td>
+          <td><span class="gain">隐患漏项由清单拦截</span></td>
+        </tr>
+        <tr>
+          <td><strong>应急处置响应</strong></td>
+          <td>油品或天然气泄漏、火灾爆炸、管道断裂、超压、LNG 低温泄漏等突发事件，需要快速匹配介质特性并确定隔离方案、泄压流程、疏散要求、禁忌操作与上报流程；不同介质、不同场景方案差异明显。</td>
+          <td>应急卡按<strong>介质 × 事故类型矩阵</strong>组织，一屏呈现介质特性匹配、隔离方案、泄压流程、疏散要求、禁忌操作与上报链路。</td>
+          <td><span class="gain">紧急场景信息直达，响应时间缩短</span></td>
+        </tr>
+        <tr>
+          <td><strong>设备维保与班组交底</strong></td>
+          <td>泵、压缩机、流量计、调压撬、安全阀及储罐附件的维保周期、常见故障与处置要点繁多；班组交接、新人培训、技术交底时现场经验难以系统化留存，人员流动即流失，新员工培训周期普遍较长。</td>
+          <td>维保卡（<strong>周期、要点、常见故障、处置</strong>）+ 交底模板；现场积累的经验按结构化卡片沉淀，随取随用。</td>
+          <td><span class="gain">经验不随人员流动流失；新人培养有系统路径</span></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="divider"><span class="line"></span><span class="diamond"></span><span class="line"></span></div>
+
+  <!-- ===== 五、工程设计场景 ===== -->
+  <h1 class="heading" data-level="1">五、工程设计场景：痛点与解决方案</h1>
+
+  <p class="paragraph">设计工作的痛点集中在规范体系核对、经验取值检索、多工况校核防漏与多目标权衡，在役评估与报审链条长、资料易缺项。本章面向管道、储库、管网及 LNG 方向设计人员，汇总 7 项痛点簇。</p>
+
+  <div class="table-wrap">
+    <div class="table-caption">表 5 工程设计 · 全流程痛点与 NF 解法对照</div>
+    <table class="table" data-caption="表 5 工程设计 · 全流程痛点与 NF 解法对照">
+      <colgroup>
+        <col style="width:13%">
+        <col style="width:30%">
+        <col style="width:39%">
+        <col style="width:18%">
+      </colgroup>
+      <thead>
+        <tr>
+          <th>痛点场景</th>
+          <th>传统方法的困境</th>
+          <th>NF 的解决方式</th>
+          <th>效率与准确性提升</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>规范体系核对</strong></td>
+          <td>需同时参考国标、行标、地方规范与企业专项要求；埋地、架空、陆上、特殊地质区域的管道配套标准各不相同；新建与改扩建项目适用的规范版本存在区别；部分条款内容交叉，核对每一项标准的适用范围耗时巨大。</td>
+          <td>规范卡片标注<strong>适用范围、版本与替代关系</strong>，按项目特征（输送介质、敷设方式、新建/改扩建、地质条件）自动圈定适用标准集，交叉条款给对照说明。</td>
+          <td><span class="gain">标准圈定从人工梳理变条件筛选，漏配风险下降</span></td>
+        </tr>
+        <tr>
+          <td><strong>经验取值与选型依据</strong></td>
+          <td>管材、壁厚、腐蚀余量、设计系数、埋深、保温方案、防火间距、阴保方案需在安全、造价、施工难度与长期运维之间寻找平衡，参考区间与选型依据散见各处，检索慢且不全。</td>
+          <td>选型卡按参数组织<strong>参考区间、取值依据与权衡要点</strong>，并与规范卡片互链，快速查阅「为什么取这个值、还能取多大」。</td>
+          <td><span class="gain">取值有出处、有区间、有权衡逻辑</span></td>
+        </tr>
+        <tr>
+          <td><strong>多工况校核防漏</strong></td>
+          <td>稳态运行、瞬态变化、水击、启停输、调峰、季节温变、冻土融沉、地震、反复充放料都需单独校核；LNG 项目还要额外考虑低温相变与冷收缩风险；不同工况的校核内容与仿真边界条件不易梳理完整，容易遗漏危险工况。</td>
+          <td><strong>工况校核矩阵</strong>按介质与场景枚举校核项与仿真边界条件设置要点，逐项勾选防漏，LNG 低温专项校核项单列。</td>
+          <td><span class="gain">危险工况遗漏由矩阵兜底</span></td>
+        </tr>
+        <tr>
+          <td><strong>材料选择与腐蚀控制</strong></td>
+          <td>碳钢、低温钢、不锈钢、涂层与补口方案需结合介质、温度、土壤腐蚀性、杂散电流、微生物腐蚀综合确定；涂层剥离、交流干扰、老化失效都是行业高频难题，设计阶段需配套检测、防护与修复参考方案。</td>
+          <td>选材卡整合<strong>适用条件与腐蚀因素对照</strong>；配套涂层失效、交流干扰等高频难题的检测、防护、修复参考方案卡片。</td>
+          <td><span class="gain">跨领域因素一卡对照，配套方案随查随得</span></td>
+        </tr>
+        <tr>
+          <td><strong>仿真建模与结果判读</strong></td>
+          <td>使用管网与工艺仿真工具时，建模思路、边界设置、收敛调试、结果判读均易遇阻；当仿真结果与工程经验冲突时，缺少可靠参考辅助判断和修正。</td>
+          <td><strong>建模检查单 + 常见报错知识库 + 结果合理性对照工程区间</strong>，冲突时给出结构化排查顺序，辅助判断与修正方向。</td>
+          <td><span class="gain">调试有路径，判读有参照</span></td>
+        </tr>
+        <tr>
+          <td><strong>多目标权衡与案例复用</strong></td>
+          <td>除水力热力计算外，还需兼顾施工、后期运维、改造空间、安全评价与投资控制；路由、压力等级、设备选型需多维度对比，缺少可复用的典型工程案例支撑。</td>
+          <td><strong>多维对比框架模板</strong>（维度、指标、权重）+ 本地案例库按场景标签检索，管网改造、LNG 接收站、储库建设等案例可复用参照。</td>
+          <td><span class="gain">对比结构化，案例可检索复用</span></td>
+        </tr>
+        <tr>
+          <td><strong>在役评估与报审资料</strong></td>
+          <td>剩余强度、腐蚀评估、寿命预测、升压或降输方案、修复方案的评估链条长、涉及标准多；工艺、仪表、消防、安全专篇、设计说明书、计算书及报审资料内容繁杂易缺项，不同审查单位对资料深度要求还有差异。</td>
+          <td><strong>评估链路卡</strong>（环节、标准依据、输出物）+ 报审资料检查清单，按项目类型生成必备清单并标注深度弹性，应对不同审查口径。</td>
+          <td><span class="gain">资料缺项由清单前置拦截</span></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- ===== 六、数据真实性保障：反幻觉五道防线 ===== -->
+  <h1 class="heading" data-level="1">六、数据真实性保障：反幻觉五道防线</h1>
+
+  <p class="paragraph">通用大模型直接回答专业问题时，会凭训练记忆生成貌似合理却无法溯源的内容——规范版本说错、条文号张冠李戴、参数区间「编得像模像样」、案例细节凭空虚构。对油气储运这类安全敏感专业，幻觉的代价不可接受。因此 NF 将<strong>「只信文件，不信记忆」</strong>设为第一设计原则：真实文件是唯一事实来源，模型记忆只用于理解、组织与解释，从不用于事实断言。五道防线层层设防，从架构上而非提示词上杜绝幻觉。</p>
+
+  <div class="card-grid" data-cols="3">
+    <div class="card">
+      <h3>防线一 · 白盒启动</h3>
+      <p>初始知识库为空，<strong>零预置</strong>：不预置任何由模型记忆生成的条文、区间或案例，内容从零开始由真实文件灌入，从源头切断幻觉来源。</p>
+    </div>
+    <div class="card">
+      <h3>防线二 · 文件溯源</h3>
+      <p>每张卡片强制携带<strong>来源文件名、页码、条文号与提取时间</strong>；任何结论都能回到原始文件核对，无出处的卡片一律不入库。</p>
+    </div>
+    <div class="card">
+      <h3>防线三 · 溯源回答</h3>
+      <p>涉及条文与取值的回答<strong>必须附来源标注</strong>；知识库未命中时明确提示「未收录，建议补充文件」，禁止硬凑答案。</p>
+    </div>
+  </div>
+
+  <div class="card-grid" data-cols="2">
+    <div class="card">
+      <h3>防线四 · 人机分工</h3>
+      <p>数值全部由确定性引擎计算，输入、公式版本、中间量、结果<strong>全链路留痕</strong>，输出可复现计算书；模型只解释结果，从不产生数值。</p>
+    </div>
+    <div class="card">
+      <h3>防线五 · 分级与双确认</h3>
+      <p>回答区分<strong>「原文摘录 / 原文转述 / 经验估算」</strong>三级；规范现行状态联网官方平台核实并经人工确认，带确认日期、到期复查。</p>
+    </div>
+  </div>
+
+  <h2 class="heading" data-level="2">6.1 真实数据从哪来：内容建设五步流程</h2>
+
+  <div class="doc-section">
+    <p class="paragraph no-indent">知识库的全部内容由用户投喂的真实文件转化而来，五步流程环环相扣，未完成校核的内容不参与回答：</p>
+    <ol class="timeline">
+      <li>
+        <strong>① 文件投喂</strong>
+        <p>用户提供规范电子版、教材、讲义、行业报告等真实文件（PDF / Word / 扫描件），全程本地解析，不出电脑。</p>
+      </li>
+      <li>
+        <strong>② 本地解析</strong>
+        <p>PDF 与 OCR 解析保留条文号、页码与表格结构，形成带精确定位信息的原文片段。</p>
+      </li>
+      <li>
+        <strong>③ 卡片草稿</strong>
+        <p>由解析片段生成规范、公式、案例卡片草稿，自动携带溯源元数据，统一标注「待校核」状态。</p>
+      </li>
+      <li>
+        <strong>④ 人工校核</strong>
+        <p>教师或工程师对照原文逐条核对草稿，修正错漏后转正。</p>
+      </li>
+      <li>
+        <strong>⑤ 入库生效</strong>
+        <p>只有转正卡片参与回答与计算，草稿态内容绝不进入结论链路。</p>
+      </li>
+    </ol>
+  </div>
+
+  <h2 class="heading" data-level="2">6.2 典型幻觉风险与防线对照</h2>
+
+  <div class="table-wrap">
+    <div class="table-caption">表 6 专业场景常见幻觉风险与 NF 防线对照</div>
+    <table class="table" data-caption="表 6 专业场景常见幻觉风险与 NF 防线对照">
+      <colgroup>
+        <col style="width:20%">
+        <col style="width:36%">
+        <col style="width:44%">
+      </colgroup>
+      <thead>
+        <tr>
+          <th>幻觉风险点</th>
+          <th>无防线时 AI 的典型表现</th>
+          <th>NF 的防线</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>规范版本状态</strong></td>
+          <td>凭记忆断言某版本「现行」，实际已被新版替代或废止。</td>
+          <td>联网官方平台核实 + 人工确认，状态字段带确认日期，定时任务到期复查（防线五）。</td>
+        </tr>
+        <tr>
+          <td><strong>条文内容复述</strong></td>
+          <td>条文号张冠李戴，内容与原文不符却语气笃定。</td>
+          <td>只做原文摘录或转述，强制附文件名、页码与条文号，可回原文核对（防线二、三）。</td>
+        </tr>
+        <tr>
+          <td><strong>参数与经验取值</strong></td>
+          <td>流速、间距、电位等区间「编得像模像样」，无出处。</td>
+          <td>取值仅来自入库卡片（文件提取 + 人工校核），未入库即拒答（防线一、三）。</td>
+        </tr>
+        <tr>
+          <td><strong>公式形式与系数</strong></td>
+          <td>公式记错版本、系数取错，心算过程不可查。</td>
+          <td>计算全部走确定性引擎，公式版本与系数在计算书中留痕可查（防线四）。</td>
+        </tr>
+        <tr>
+          <td><strong>工程案例细节</strong></td>
+          <td>案例时间、地点、数值虚构，无法溯源。</td>
+          <td>案例只来自用户投喂的真实资料，脱敏保留事实骨架，卡卡有出处（防线二）。</td>
+        </tr>
+        <tr>
+          <td><strong>检索未命中时</strong></td>
+          <td>硬凑一个「最接近」的答案，使用者难以察觉。</td>
+          <td>明确回答「知识库未收录」，并提示应补充哪些文件（防线三）。</td>
+        </tr>
+        <tr>
+          <td><strong>行业时事与动态</strong></td>
+          <td>凭记忆编造「最新标准已发布」「某地发生事故」等不实动态。</td>
+          <td>时事由每日任务扫描收录入独立事件库，<strong>真假都收、分级标注</strong>：官方证实与未经证实一目了然，辟谣与学术造假通报及时更新（详见第八、九章）。</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <aside class="callout" data-variant="tip">
+    <p><strong>对使用者的意义</strong>：NF 给出的每一条规范结论都附出处、每一个数值都可复现、每一次「不知道」都明示——可信度不再依赖使用者对 AI 的信任，而是由溯源链条保障。验证 NF 是否可信只需核对一处：卡片上的来源标注能否在原始文件中找到。</p>
+  </aside>
+
+  <!-- ===== 七、计算可靠性保障 ===== -->
+  <h1 class="heading" data-level="1">七、计算可靠性保障：真实计算逻辑，不乱给结果</h1>
+
+  <p class="paragraph">反幻觉防线保证「说的每句话有出处」，但油气储运的数值错误同样致命——压降算错影响输送方案，壁厚算错影响结构安全，保护电位判错影响防腐有效性。因此计算环节单独设防：NF 输出的每个数值都必须来自确定性引擎按<strong>真实计算逻辑</strong>执行的过程，模型本身永远不产生数值。四道闸门从公式来源到结果输出全链路把关，杜绝「乱给结果」。</p>
+
+  <div class="card-grid" data-cols="2">
+    <div class="card">
+      <h3>闸门一 · 公式真实来源</h3>
+      <p>引擎内置的每个公式对应一张公式卡片，公式形式、系数、适用条件<strong>逐字取自规范原文或经典教材</strong>（带溯源），实现与卡片一一对应，公式版本与规范版本绑定；规范改版时公式同步审查更新。</p>
+    </div>
+    <div class="card">
+      <h3>闸门二 · 基准题回归</h3>
+      <p>公式实现完成先用教材手算例题逐单元验证；建立<strong>基准题回归测试集</strong>（经典例题、课程设计真题、工程算例），引擎每次更新全量回归，偏差超过阈值（如 0.1%）自动阻断——防止「代码改了、结果悄悄变了」。</p>
+    </div>
+    <div class="card">
+      <h3>闸门三 · 量纲与适用域防御</h3>
+      <p>输入<strong>强制量纲校验</strong>，单位不匹配直接报错；参数超出公式适用域（流态超范围、温压超出物性关联式范围）时明确告警「公式不适用」并给出原因，而不是硬算出一个错误结果。</p>
+    </div>
+    <div class="card">
+      <h3>闸门四 · 失败即报错，结果必带计算书</h3>
+      <p>数值不收敛、数据缺失、参数异常时返回<strong>明确错误与原因</strong>，绝不输出模糊的「估算值」冒充精确结果；每个数值结果自动附带计算书，任何人可手工复算验证。</p>
+    </div>
+  </div>
+
+  <h2 class="heading" data-level="2">7.1 计算书：每个数值的可验证凭证</h2>
+
+  <div class="doc-section">
+    <p class="paragraph no-indent">计算书固定包含以下七项内容，拿到结果的人不需要「信任」NF，只需按计算书复算一遍：</p>
+    <ul class="list">
+      <li><strong>输入参数及单位</strong>——含用户原始输入与单位换算过程；</li>
+      <li><strong>调用的公式及版本</strong>——公式形式、来源规范编号与条文号（或教材页码）；</li>
+      <li><strong>常数与物性取值及来源</strong>——摩擦系数、物性数据均标注出处卡片；</li>
+      <li><strong>中间过程量</strong>——雷诺数、流态判别、沿程水头损失等逐步展示，可逐项核对；</li>
+      <li><strong>最终结果与有效位数</strong>——按数据精度给出合理位数，不虚假精确；</li>
+      <li><strong>合理区间判据对照</strong>——结果与入库判据区间比对，越界自动告警并解释；</li>
+      <li><strong>告警与不适用声明</strong>——公式适用域、参数敏感性提示如实呈现。</li>
+    </ul>
+  </div>
+
+  <aside class="callout" data-variant="warning">
+    <p><strong>模型与引擎的分工边界</strong>：模型负责把任务翻译成引擎输入、解释计算结果与判据含义；引擎负责产生数值。模型在中间任何环节都<strong>不手算、不心算补值、不修改引擎输出的数字</strong>——发现输入可疑时退回让用户确认，而不是替用户「改一个合理值」。</p>
+  </aside>
+
+  <!-- ===== 八、数据库迭代与国标版本生命周期 ===== -->
+  <h1 class="heading" data-level="1">八、数据库持续迭代与国标版本生命周期</h1>
+
+  <p class="paragraph">数据库不是一次建成的静态资料袋，而是每日自检、持续收录官方正版、版本随国标演进自动迭代的「活库」。三条硬性要求：<strong>内容只从官方正版渠道收录；新旧版本共存、老国标永不删除；引用永远默认最新现行版，新国标实施首日即时切换</strong>。</p>
+
+  <h2 class="heading" data-level="2">8.1 官方正版收录渠道</h2>
+
+  <div class="doc-section">
+    <ul class="list">
+      <li><strong>国家标准（GB/GB/T）</strong>：以全国标准信息公共服务平台为准核实发布、实施、替代状态，正版渠道获取文本；</li>
+      <li><strong>行业标准（SY/T 等）</strong>：行业主管部门标准公告渠道核实状态与版本；</li>
+      <li><strong>国外标准（API、ASME、ISO、NACE/AMPP 等）</strong>：官方机构发布渠道核实与获取；</li>
+      <li><strong>收录红线</strong>：非官方渠道流传的「电子版」一律不收——既是版权要求，更是准确性要求：来路不明的版本可能被篡改、缺页、混入旧版内容，是幻觉之外的另一类数据污染源。</li>
+    </ul>
+  </div>
+
+  <h2 class="heading" data-level="2">8.2 国标版本生命周期：四态共存，生效即切换</h2>
+
+  <div class="table-wrap">
+    <div class="table-caption">表 7 国标版本四态生命周期与引用行为</div>
+    <table class="table" data-caption="表 7 国标版本四态生命周期与引用行为">
+      <colgroup>
+        <col style="width:16%">
+        <col style="width:26%">
+        <col style="width:32%">
+        <col style="width:26%">
+      </colgroup>
+      <thead>
+        <tr>
+          <th>版本状态</th>
+          <th>定义</th>
+          <th>引用行为</th>
+          <th>典型场景</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>已发布未实施</strong></td>
+          <td>官方公告已发布，实施日期未到。</td>
+          <td>可查全文卡片；默认仍引用现行版，同时醒目提示「新版将于 X 日实施」及主要修订要点。</td>
+          <td>新项目是否提前按新版执行，依据合同与行业约定决定并留痕。</td>
+        </tr>
+        <tr>
+          <td><strong>现行</strong></td>
+          <td>实施日起至被替代或废止。</td>
+          <td><strong>默认引用版</strong>：所有查询、计算与合规核查自动采用，无需人工指定。</td>
+          <td>日常学习、课程设计、工程设计、运维核查。</td>
+        </tr>
+        <tr>
+          <td><strong>已替代（历史版）</strong></td>
+          <td>被新版替代，内容完整保留。</td>
+          <td><strong>永久可查、永不删除</strong>：标注「已被 XX 替代」；按用户显式指令调取，自动留痕「按历史版本核查」。</td>
+          <td>在役工程按建成年代适用规范鉴定、事故复盘按事发时版本核查、合同指定版本。</td>
+        </tr>
+        <tr>
+          <td><strong>废止</strong></td>
+          <td>官方公告废止，无替代版。</td>
+          <td>留存并标注废止状态，仅供历史参考，引用时强提示。</td>
+          <td>历史资料研究、老资料解读。</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="doc-section">
+    <p class="paragraph no-indent"><strong>切换与对照机制：</strong></p>
+    <ul class="list">
+      <li><strong>生效日自动切换</strong>：每日定时任务比对当日日期与标准实施日期——新国标实施首日，其卡片自动由「已发布未实施」转为「现行」，原版本同步转为「已替代」并保留全部内容；此后所有引用默认采用新版，<strong>无需人工干预，新国标执行的第一时间就用上</strong>。</li>
+      <li><strong>新旧版本对照</strong>：收录与切换时生成版本对照要点（主要修订差异、强条变化），引用历史版的场景下同步提示新版变化，避免「按旧版做、不知新版已改」。</li>
+      <li><strong>过渡期处理</strong>：发布到实施之间的窗口期，默认按现行旧版执行并持续提示新版实施倒计时；项目合同或行业文件另有约定的按约定执行并留痕。</li>
+    </ul>
+  </div>
+
+  <h2 class="heading" data-level="2">8.3 每日自检与行业跟踪：定时任务五件事</h2>
+
+  <div class="doc-section">
+    <p class="paragraph no-indent">每日定时任务（如每日清晨）依次执行五项，结果落盘为一份 HTML 更新报告并推送：</p>
+    <ol class="timeline">
+      <li>
+        <strong>① 数据库健康自检</strong>
+        <p>卡片元数据完整性（溯源字段、状态字段、确认日期）、卡片间引用关系死链、重复与孤儿卡片检测；确认日期超期的规范卡自动标记「待复查」。</p>
+      </li>
+      <li>
+        <strong>② 计算引擎回归</strong>
+        <p>基准题集全量回归（联动闸门二），任何偏差超阈值即告警并冻结相关公式对外输出，直到修复通过。</p>
+      </li>
+      <li>
+        <strong>③ 官方渠道扫描</strong>
+        <p>扫描全国标准信息公共服务平台、行业标准公告及 API、ASME、ISO、NACE 等国外机构发布动态；检测到相关标准发布、实施、替代、废止，自动触发核实流程并更新版本状态链（含生效日切换）。</p>
+      </li>
+      <li>
+        <strong>④ 事件库收录与行业跟踪</strong>
+        <p>扫描应急管理部事故通报、能源主管部门政策、官方辟谣平台、学术撤稿与不端通报及国内外行业重大事件，按第九章可信度分级收录入事件库，收录与分级结果进入当日 HTML 更新报告（见 8.4），每条附来源链接与分级标注。</p>
+      </li>
+      <li>
+        <strong>⑤ 生成 HTML 更新报告并推送</strong>
+        <p>本次运行的全部结果自动生成一份鲜明直观的 HTML 更新报告（结构与视觉规范见 8.4），按日期归档留存；异常项、标准变更、重要行业动态在报告中置顶提示，并主动推送给用户，教师用户同步获知讲义关联影响。</p>
+      </li>
+    </ol>
+  </div>
+
+  <h2 class="heading" data-level="2">8.4 每日更新报告：每次任务一份鲜明直观的 HTML 文件</h2>
+
+  <p class="paragraph">定时任务的<strong>每一次运行</strong>都会自动生成一份独立的 HTML 更新报告文件——它既是当日数据库的「体检报告」，也是行业动态的「每日简报」，打开第一屏即知总体状况，无需翻日志、无需查数据库。报告文件按运行日期命名（如「NF更新报告-2026-10-28.html」，同日多次运行追加时间后缀），自动存入报告归档目录，逐日累积形成可追溯的数据库运行史。</p>
+
+  <div class="table-wrap">
+    <div class="table-caption">表 8 每日更新报告的六大区块与视觉呈现</div>
+    <table class="table" data-caption="表 8 每日更新报告的六大区块与视觉呈现">
+      <colgroup>
+        <col style="width:15%">
+        <col style="width:38%">
+        <col style="width:47%">
+      </colgroup>
+      <thead>
+        <tr>
+          <th>报告区块</th>
+          <th>呈现内容</th>
+          <th>鲜明直观的呈现方式</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>① 总览横幅</strong></td>
+          <td>运行日期与时间、五项任务执行摘要、当日总体状态。</td>
+          <td><strong>三色横幅</strong>定基调——绿＝全部正常、黄＝存在警告、红＝存在异常或阻断项；关键数字（回归通过率、新增卡片数、新收录事件数）在横幅内一行直达。</td>
+        </tr>
+        <tr>
+          <td><strong>② 数据库自检</strong></td>
+          <td>溯源字段完整性、引用死链、重复与孤儿卡片、逾期复查项。</td>
+          <td>检查项清单逐条标<strong>状态色</strong>（绿通过 / 黄警告 / 红失败），问题项红底高亮并锚点跳转直达明细。</td>
+        </tr>
+        <tr>
+          <td><strong>③ 计算引擎回归</strong></td>
+          <td>基准题数、通过率、最大偏差、被冻结的公式清单。</td>
+          <td><strong>大数字指标卡</strong>呈现通过率与偏差；偏差超阈值与被冻结公式用红色警示框说明原因与影响范围。</td>
+        </tr>
+        <tr>
+          <td><strong>④ 标准动态</strong></td>
+          <td>新发布、今日实施、已替代、废止的标准清单与生效切换记录。</td>
+          <td><strong>版本状态徽章</strong>标注四态；今日实施的标准高亮「已自动切换」，附新旧版本对照要点。</td>
+        </tr>
+        <tr>
+          <td><strong>⑤ 事件库更新</strong></td>
+          <td>新收录事件、状态迁移记录（升级 A 级、转辟谣）、撤稿警示。</td>
+          <td><strong>五色分级徽章</strong>（A 绿 / B 蓝 / C 灰 / R 红 / X 橙）分块列表；辟谣与撤稿项红框置顶，每条附原文链接。</td>
+        </tr>
+        <tr>
+          <td><strong>⑥ 待办与对比</strong></td>
+          <td>待人工确认事项（标准变更核实、卡片校核）、与昨日报告的变化项。</td>
+          <td>待办以<strong>勾选清单</strong>呈现；变化项标「新增 / 变更」高亮，一眼看出今天与昨天不同在哪里。</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="doc-section alt">
+    <p class="paragraph no-indent"><strong>报告设计四原则：</strong></p>
+    <ul class="list">
+      <li><strong>状态即颜色</strong>——绿 / 黄 / 红三色语义贯穿全篇，任何区块的问题项统一用状态色标记，不逐字阅读也能一眼感知当日健康度；</li>
+      <li><strong>异常必置顶</strong>——所有红 / 黄项在报告顶部摘要区集中列出并可点击跳转到对应区块，重要问题不需要翻找；</li>
+      <li><strong>离线自包含</strong>——单个 HTML 文件、无外部依赖，双击即看、可直接转发存档，与知识库执行同样的本地原则；</li>
+      <li><strong>归档即历史</strong>——报告逐日归档不删除，数据库任何一天的状态都可回溯，运行史本身构成溯源链的一部分。</li>
+    </ul>
+  </div>
+
+  <aside class="callout" data-variant="warning">
+    <p><strong>时事信息的定位约束</strong>：事件库真假都收但逐条分级——<strong>A 级（官方证实）</strong>方可作为结论线索，B/C 级明示「未经核实」，已辟谣信息保留完整辟谣链防止重复传播；A 级中涉及标准变更的公告，仍须走核实流程（官方渠道确认 + 人工确认）后才改动专业库状态。存疑事件绝不直接作为专业结论依据，防止幻觉防线被「新闻」绕开（分级体系详见第九章）。</p>
+  </aside>
+
+  <!-- ===== 九、事件库与双库联动 ===== -->
+  <h1 class="heading" data-level="1">九、事件库：时事真假分级收录与双库联动</h1>
+
+  <p class="paragraph">每日跟踪产生的是真假混杂的动态信息：官方事故通报是可信的，自媒体爆料未经证实，行业传闻可能次日被辟谣，甚至学术论文也会因造假被撤稿。这类信息的处理逻辑与专业知识截然不同——专业内容必须校核转正方可入库，时事却必须先收录再分级，否则时效性尽失。因此 NF 采用<strong>双库架构</strong>：专业知识库与事件库物理独立、逻辑联动——独立保障互不污染，联动保障互通有用。</p>
+
+  <h2 class="heading" data-level="2">9.1 双库架构：同一系统，两种规则</h2>
+
+  <div class="table-wrap">
+    <div class="table-caption">表 9 专业知识库与事件库的架构分工</div>
+    <table class="table" data-caption="表 9 专业知识库与事件库的架构分工">
+      <colgroup>
+        <col style="width:16%">
+        <col style="width:42%">
+        <col style="width:42%">
+      </colgroup>
+      <thead>
+        <tr>
+          <th>维度</th>
+          <th>专业知识库</th>
+          <th>事件库</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>存储内容</strong></td>
+          <td>规范、公式、设备、介质、案例卡片</td>
+          <td>事故、政策、标准动态、学术事件、辟谣记录</td>
+        </tr>
+        <tr>
+          <td><strong>准入标准</strong></td>
+          <td>白盒启动 + 文件溯源 + 人工校核转正，无出处不入库</td>
+          <td><strong>真假都收</strong>，逐条标注可信度分级</td>
+        </tr>
+        <tr>
+          <td><strong>更新节奏</strong></td>
+          <td>慢而准——校核通过才生效</td>
+          <td>快而标级——当日收录、当日分级</td>
+        </tr>
+        <tr>
+          <td><strong>可信度保障</strong></td>
+          <td>溯源链 + 校核转正 + 计算回归</td>
+          <td>分级标注 + 状态迁移 + 辟谣跟踪</td>
+        </tr>
+        <tr>
+          <td><strong>结论链路地位</strong></td>
+          <td>专业结论的唯一来源</td>
+          <td>线索池，仅 A 级可作结论线索</td>
+        </tr>
+        <tr>
+          <td><strong>故障影响域</strong></td>
+          <td colspan="2">两库独立运行——事件库误收录或被污染，不影响专业库可用性与结论可信度</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h2 class="heading" data-level="2">9.2 可信度五级标注：真假都收，但必须标明</h2>
+
+  <p class="paragraph">事件库的收录原则是<strong>「不因存疑而不收，不因收录而充真」</strong>——每条事件强制携带可信度分级，官方证实与否一目了然，使用者自行决定采信程度。</p>
+
+  <div class="table-wrap">
+    <div class="table-caption">表 10 事件可信度五级标注体系</div>
+    <table class="table" data-caption="表 10 事件可信度五级标注体系">
+      <colgroup>
+        <col style="width:15%">
+        <col style="width:31%">
+        <col style="width:31%">
+        <col style="width:23%">
+      </colgroup>
+      <thead>
+        <tr>
+          <th>级别</th>
+          <th>判定标准</th>
+          <th>标注与引用行为</th>
+          <th>典型来源</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>A 级<br>官方证实</strong></td>
+          <td>官方正式发布或通报：事故调查报告、政策文件、标准公告、机构调查结论、期刊撤稿声明。</td>
+          <td>标注「官方已证实」；可作为结论线索引用，可进入 9.4 联动转化流程。</td>
+          <td>应急管理部、主管部门、标准机构、期刊官方声明</td>
+        </tr>
+        <tr>
+          <td><strong>B 级<br>权威未证实</strong></td>
+          <td>权威媒体已报道，但官方尚未发布或证实。</td>
+          <td>明示「官方未证实」，不作结论依据。</td>
+          <td>主流行业媒体、权威新闻机构</td>
+        </tr>
+        <tr>
+          <td><strong>C 级<br>行业线索</strong></td>
+          <td>行业社区、自媒体、口口相传的线索。</td>
+          <td>明示「未经证实，仅作线索」，展示降权。</td>
+          <td>行业论坛、自媒体</td>
+        </tr>
+        <tr>
+          <td><strong>R 级<br>已辟谣</strong></td>
+          <td>官方或权威渠道已明确辟谣。</td>
+          <td><strong>保留完整辟谣链并置顶警示</strong>，防止同一谣言换个来源再传一遍。</td>
+          <td>网信办辟谣平台、官方澄清公告</td>
+        </tr>
+        <tr>
+          <td><strong>X 级<br>争议存疑</strong></td>
+          <td>信源相互冲突或事件仍在调查中。</td>
+          <td>标注争议状态与双方信源，等待升级或辟谣。</td>
+          <td>多方说法并存的事件</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h2 class="heading" data-level="2">9.3 状态迁移：辟谣与学术造假的及时更新</h2>
+
+  <div class="doc-section">
+    <p class="paragraph no-indent">事件的可信度不是一次性判定，而是随官方信息发布持续迁移的生命周期：</p>
+    <ol class="timeline">
+      <li>
+        <strong>① 线索收录</strong>
+        <p>每日任务扫描到的动态当日入事件库，按来源初判分级，绝不因存疑而漏收。</p>
+      </li>
+      <li>
+        <strong>② 核实跟进</strong>
+        <p>每日扫描官方渠道：官方通报出现即升级 A 级；辟谣信息出现即转 R 级；冲突信源标记 X 级。</p>
+      </li>
+      <li>
+        <strong>③ 升级或辟谣</strong>
+        <p>状态迁移只追加不删除——C 级传闻升级 A 级时保留「原为线索」记录；被辟谣时保留「原始传闻 → 辟谣结论 → 辟谣来源」完整链条。</p>
+      </li>
+      <li>
+        <strong>④ 归档留存</strong>
+        <p>事件定论后归档，完整状态链留存，供复盘与谣言溯源。</p>
+      </li>
+    </ol>
+  </div>
+
+  <div class="doc-section alt">
+    <p class="paragraph no-indent"><strong>学术造假与撤稿的专项跟踪：</strong></p>
+    <ul class="list">
+      <li><strong>造假通报收录</strong>：跟踪期刊撤稿声明（如 Retraction Watch 类撤稿数据库）、科研机构与主管部门的调查通报，按 A 级收录造假结论与撤稿记录；</li>
+      <li><strong>联动警示</strong>：撤稿通报核实后，专业库中引用该文献的卡片<strong>自动标记「来源文献已撤稿」警示</strong>，提醒使用者重新核对该依据；</li>
+      <li><strong>辟谣更新</strong>：每日扫描官方辟谣平台，B/C 级事件被辟谣后转 R 级并置顶警示，<strong>绝不静默删除</strong>——删除记录反而会让谣言换个来源再传一遍。</li>
+    </ul>
+  </div>
+
+  <h2 class="heading" data-level="2">9.4 联动机制：严格单向的转化通道</h2>
+
+  <div class="doc-section">
+    <p class="paragraph no-indent">两库联动是<strong>严格单向</strong>的：事件信息只能通过明确通道转化为专业内容，反向只做检索调取，任何通道都不允许未证实信息直接流入专业结论：</p>
+    <ul class="list">
+      <li><strong>A 级事故通报 → 教学案例</strong>：脱敏 + 人工校核（走第六章五步流程）后转化为专业库案例卡片，供事故复盘教学使用；</li>
+      <li><strong>A 级标准公告 → 版本更新</strong>：触发第八章核实流程（官方渠道 + 人工确认）后更新专业库版本状态链；</li>
+      <li><strong>A 级撤稿通报 → 引用警示</strong>：专业库引用卡片自动标记撤稿警示；</li>
+      <li><strong>专业库 → 事件库（反向检索）</strong>：用户查询某事故或政策时联动调取事件库条目，展示时<strong>强制附带分级标注</strong>。</li>
+    </ul>
+  </div>
+
+  <aside class="callout" data-variant="warning">
+    <p><strong>为什么必须独立</strong>：三重隔离缺一不可——<strong>污染隔离</strong>，C 级传闻永远进不了专业结论链路，事件库再热闹也污染不到专业判断；<strong>节奏隔离</strong>，专业库的校核流程不因「热点来了」而跳过，快节奏裹挟不了慢严谨；<strong>故障隔离</strong>，事件库误收录或来源异常时，专业库的可用性与可信度不受影响。独立是防火墙，联动是单向门。</p>
+  </aside>
+
+  <!-- ===== 十、核心机制总览 ===== -->
+  <h1 class="heading" data-level="1">十、NF 核心机制总览</h1>
+
+  <p class="paragraph">前四章 26 项痛点簇的解法，可归并为九大核心机制；第六章的五道防线、第七章的四道闸门与第九章的双库隔离作为元原则贯穿于全部机制之上，确保每个机制的产出都建立在真实文件与真实计算之上。同一套机制以<strong>身份先行</strong>方式组织使用入口（详见 10.1）——首次使用先询问身份，主推该身份相关场景、次推其余；四类身份对应不同产出深度：学生得到引导与解释，教师得到模板与清单，运维人员得到速查卡与处置路径，设计人员得到依据与校核框架。</p>
+
+  <div class="card-grid" data-cols="4">
+    <div class="card">
+      <h3>① 规范卡片体系</h3>
+      <p>编号、现行版本、替代链、适用范围、强条要点与<strong>官方查阅渠道</strong>；每卡携带来源文件与条文定位，状态链拦截版本误用，更新由任务监控推送。</p>
+    </div>
+    <div class="card">
+      <h3>② 公式卡片 + 计算引擎</h3>
+      <p>参数物理意义、量纲表、适用流态工况（均自教材与规范原文提取）；<strong>MCP 引擎确定性计算</strong>，告警判据取自入库卡片，计算过程留痕可复现。</p>
+    </div>
+    <div class="card">
+      <h3>③ 决策树与检查清单</h3>
+      <p>选型逐节点推进，<strong>合规、作业、报审清单</strong>逐项勾选，缺项漏项统一兜底。</p>
+    </div>
+    <div class="card">
+      <h3>④ 身份先行路由</h3>
+      <p><strong>首次使用先询问身份</strong>（学生/教师/运维/设计）并写入长期记忆；主推相关场景、次推其余可及；一句话切换身份，记忆跟人不跟身份。</p>
+    </div>
+  </div>
+
+  <div class="card-grid" data-cols="5">
+    <div class="card">
+      <h3>⑤ 长期记忆</h3>
+      <p>沉淀常用工况、易错点与个人偏好，复习与答疑<strong>定向强化</strong>，越用越贴合。</p>
+    </div>
+    <div class="card">
+      <h3>⑥ 每日定时任务</h3>
+      <p><strong>每日自检</strong>数据库健康与计算回归，<strong>每日扫描</strong>官方标准公告与行业动态；每次运行<strong>自动生成 HTML 更新报告</strong>，异常与变更置顶推送。</p>
+    </div>
+    <div class="card">
+      <h3>⑦ 本地知识库</h3>
+      <p>白盒启动，内容全部来自用户真实文件与<strong>官方正版渠道</strong>；卡片本地留存不出电脑。</p>
+    </div>
+    <div class="card">
+      <h3>⑧ 版本生命周期</h3>
+      <p>四态共存不删除，<strong>生效日自动切换</strong>新国标；历史版永久可查，默认最新现行版。</p>
+    </div>
+    <div class="card">
+      <h3>⑨ 双库联动</h3>
+      <p>专业库与事件库<strong>独立运行互不污染</strong>：事件真假分级收录，仅 A 级官方证实可走单向通道转化。</p>
+    </div>
+  </div>
+
+  <h2 class="heading" data-level="2">10.1 身份先行：主推相关，次推其余，随时切换</h2>
+
+  <p class="paragraph">NF 的使用入口按<strong>身份先行</strong>模型组织：首次使用时主动询问使用者身份——学生、专业教师、场站运维人员或工程设计人员——选定后写入长期记忆，此后自动识别、不再重复询问。与身份直接相关的场景入口<strong>主推</strong>（置顶展示、默认工作流深度），其余内容<strong>次推</strong>（入口降级、检索仍然可及）。次推不隐藏，因为跨身份需求真实存在：学生做毕业设计要用设计工具，教师备课要走学生路径预演。</p>
+
+  <div class="table-wrap">
+    <div class="table-caption">表 11 四类身份的主推与次推内容</div>
+    <table class="table" data-caption="表 11 四类身份的主推与次推内容">
+      <colgroup>
+        <col style="width:12%">
+        <col style="width:40%">
+        <col style="width:27%">
+        <col style="width:21%">
+      </colgroup>
+      <thead>
+        <tr>
+          <th>身份</th>
+          <th>主推（置顶入口）</th>
+          <th>次推（降级可及）</th>
+          <th>典型切换场景</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>学生</strong></td>
+          <td>规范卡片查询、公式计算与参数解释、课设毕设决策树、实验指导、复习自测</td>
+          <td>教师题库模板、设计选型卡、运维速查卡</td>
+          <td>做毕设时借用设计向工具</td>
+        </tr>
+        <tr>
+          <td><strong>专业教师</strong></td>
+          <td>题库与任务书生成、规范变更与讲义关联推送、清单抽查视图、案例转化流程</td>
+          <td>学生全流程（备课预演用）、设计规范卡</td>
+          <td>备课预演学生使用路径</td>
+        </tr>
+        <tr>
+          <td><strong>场站运维</strong></td>
+          <td>故障排查卡、应急卡、高危作业清单、阴保判定、维保交底</td>
+          <td>规范全文卡、设计校核矩阵</td>
+          <td>参与改造方案讨论时</td>
+        </tr>
+        <tr>
+          <td><strong>工程设计</strong></td>
+          <td>选型取值卡、工况校核矩阵、报审清单、版本状态链、计算书</td>
+          <td>教学案例库、实验数据方法</td>
+          <td>带新人培训时</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="doc-section">
+    <p class="paragraph no-indent"><strong>身份模型的五条规则：</strong></p>
+    <ul class="list">
+      <li><strong>一句话切换</strong>——「切换到设计身份」即生效，主推内容立即重排，无需重新初始化；</li>
+      <li><strong>记忆跟人不跟身份</strong>——长期记忆中的常用工况、易错点与个人偏好不随身份切换清零，同一人换身份后历史沉淀仍然可用；</li>
+      <li><strong>次推不锁死</strong>——任何身份下都能检索全库内容，主推只决定入口排序与默认深度，不做权限隔离；</li>
+      <li><strong>多人共用适配</strong>——教研室或机房共用电脑时，可选会话级临时身份（当次有效、不写入长期记忆），避免身份串用；</li>
+      <li><strong>分期如实提示</strong>——分期建设期间，尚未加载的身份场景如实提示「待后续阶段加载」，不虚设空入口。</li>
+    </ul>
+  </div>
+
+  <!-- ===== 十一、效率对比总结 ===== -->
+  <h1 class="heading" data-level="1">十一、传统方法 vs NF：效率与准确性总对比</h1>
+
+  <p class="paragraph">将四类角色共通的八类工作环节横向对比，可以更直观地看到 NF 相对传统方法在信息获取路径、核查方式与经验流转上的结构性差异。</p>
+
+  <div class="table-wrap">
+    <div class="table-caption">表 12 传统方法与 NF 的效率与准确性总对比</div>
+    <table class="table" data-caption="表 12 传统方法与 NF 的效率与准确性总对比">
+      <colgroup>
+        <col style="width:19%">
+        <col style="width:30%">
+        <col style="width:27%">
+        <col style="width:24%">
+      </colgroup>
+      <thead>
+        <tr>
+          <th>对比维度</th>
+          <th>传统方法</th>
+          <th>NF 方式</th>
+          <th>核心变化</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>规范条文定位与版本核对</strong></td>
+          <td>多本纸质/PDF 规范交叉翻查，版本状态靠人工记忆核对</td>
+          <td>规范卡片直达条文要点（附文件与页码），版本状态联网核实并经人工确认</td>
+          <td><span class="gain">小时级 → 分钟级</span></td>
+        </tr>
+        <tr>
+          <td><strong>公式计算与量纲校验</strong></td>
+          <td>手工套用公式，人工换算核对量纲</td>
+          <td>确定性引擎计算，强制量纲校验</td>
+          <td><span class="gain">量纲错误在提交前拦截</span></td>
+        </tr>
+        <tr>
+          <td><strong>计算结果合理性判断</strong></td>
+          <td>凭个人经验与感觉判断</td>
+          <td>结果对照入库判据区间告警（判据取自规范原文并经校核），失败即报错不硬算</td>
+          <td><span class="gain">每个结果都有判据，无「乱给结果」</span></td>
+        </tr>
+        <tr>
+          <td><strong>方案合规核查</strong></td>
+          <td>逐项人工对照规范原文（安全间距、试压、强条）</td>
+          <td>检查清单逐项勾选，强制条文符合性核查</td>
+          <td><span class="gain">漏项可控、可追溯</span></td>
+        </tr>
+        <tr>
+          <td><strong>重复性答疑</strong></td>
+          <td>口答/邮件逐次响应，跨年级重复</td>
+          <td>卡片自助检索 + 一次解答归档复用</td>
+          <td><span class="gain">教师时间转向增量辅导</span></td>
+        </tr>
+        <tr>
+          <td><strong>规范更新跟踪</strong></td>
+          <td>人工定期检索公告或同事转告，滞后数周甚至数月，讲义滞后更新</td>
+          <td>每日任务扫描官方公告，<strong>新国标实施首日自动切换</strong>并推送受影响内容</td>
+          <td><span class="gain">更新滞后风险消除，切换零延误</span></td>
+        </tr>
+        <tr>
+          <td><strong>历史版本查阅</strong></td>
+          <td>旧版规范纸质存档难找，电子版来路不明</td>
+          <td>历史版<strong>永久留存可查</strong>，按建成年代/合同调取并留痕</td>
+          <td><span class="gain">老工程鉴定、事故复盘有据可依</span></td>
+        </tr>
+        <tr>
+          <td><strong>行业动态与辟谣跟踪</strong></td>
+          <td>零散刷新闻，重要事故与政策易漏；谣言与辟谣混杂，难辨真假</td>
+          <td>事件库真假分级收录，官方证实与未经证实一目了然，辟谣与造假通报及时更新，<strong>每日 HTML 报告</strong>一屏呈现</td>
+          <td><span class="gain">线索级覆盖，真假可辨</span></td>
+        </tr>
+        <tr>
+          <td><strong>资料与案例查找</strong></td>
+          <td>讲义、手册、行业报告、内部资料分散检索</td>
+          <td>本地统一知识库 + 标签化检索</td>
+          <td><span class="gain">一处检索全量覆盖</span></td>
+        </tr>
+        <tr>
+          <td><strong>新人与转岗人员培养</strong></td>
+          <td>师傅带徒弟 + 零散笔记，经验随人员流动流失</td>
+          <td>故障/应急/维保卡片 + 交底模板系统化培养</td>
+          <td><span class="gain">培训周期缩短，经验可留存</span></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <aside class="callout" data-variant="tip">
+    <p><strong>估算口径说明</strong>：表中「小时级→分钟级」等为基于典型工作场景的量级估算，用于刻画传统方法与 NF 在信息获取与核查路径上的结构性差异；实际收益取决于知识库覆盖度与内容校核完成度，落地后应以真实使用数据校准。</p>
+  </aside>
+
+  <!-- ===== 十二、使用边界与前提 ===== -->
+  <h1 class="heading" data-level="1">十二、使用边界与前提</h1>
+
+  <p class="paragraph">NF 的能力边界必须在立项时明确，以下五条红线贯穿全部场景与分期建设，不随功能扩展而放松。</p>
+
+  <div class="doc-section">
+    <aside class="callout" data-variant="warning">
+      <p><strong>① 版权与内容边界</strong>：GB、SY/T 等标准全文受版权保护，NF 仅从<strong>官方正版渠道</strong>收录，知识库仅存<strong>索引、要点摘编与官方查阅渠道</strong>（如全国标准信息公共服务平台），不存全文；非官方渠道的电子版一律不收；强制性条文的引用一律提示使用者人工核对现行原文。</p>
+    </aside>
+    <aside class="callout" data-variant="warning">
+      <p><strong>② 校核责任</strong>：公式取值、工程合理区间、强条摘编的初版内容一律标注<strong>「待校核」</strong>状态，投入教学与工程使用前须经专业教师或注册工程师逐条确认后转正；油气安全领域数值错误的代价不可接受。</p>
+    </aside>
+    <aside class="callout" data-variant="tip">
+      <p><strong>③ 仿真软件定位</strong>：NF 提供建模检查单、报错知识库与结果判读参照，<strong>不替代</strong> Aspen HYSYS、PipeFlow、SPS、OLGA 等厂商技术支持，也不承担工程审定责任；仿真结果与工程经验冲突时，NF 的价值在于给出结构化的排查顺序与修正方向。</p>
+    </aside>
+    <aside class="callout" data-variant="warning">
+      <p><strong>④ 未收录即拒答</strong>：知识库未覆盖的问题，NF 明确回答「未收录」并给出应补充的文件建议，<strong>绝不用模型记忆生成貌似合理的专业内容</strong>——宁可说不知道，不可编造。这是五道防线中最重要的一条行为约束，也是 NF 与通用 AI 助手的本质区别。</p>
+    </aside>
+    <aside class="callout" data-variant="warning">
+      <p><strong>⑤ 事件分级、专业零污染</strong>：事件库真假都收但逐条标注可信度分级——官方证实 / 权威未证实 / 行业线索 / 已辟谣 / 争议存疑，存疑信息不作专业判断依据；辟谣与学术造假通报及时更新并保留完整记录，<strong>绝不静默删除</strong>。B/C 级事件以及 A 级中涉及标准变更的线索，均须经官方渠道核实与人工确认后才可影响专业库。每日扫描受网络可达性与官方平台更新延迟影响，<strong>不承诺零延迟捕获</strong>，时效性以官方公告为准。</p>
+    </aside>
+    <p class="paragraph no-indent"><strong>数据边界</strong>：全部规范卡片、案例库、个人记忆与计算过程在本地桌面环境处理，资料不上传不出电脑；教学案例入库前完成脱敏，企业内部资料仅按授权范围留存。</p>
+  </div>
+
+  <!-- ===== 尾页 ===== -->
+  <section class="title end_page">
+    <h1>需求基线已就绪</h1>
+    <p>本文档汇总学生、教师、场站运维、工程设计四类角色共 26 项痛点簇，逐项对照传统方法与 NF 解法，归并为九大核心机制，以五道反幻觉防线、四道计算闸门落实「只信文件、不信记忆」「真实计算、不乱给结果」两项第一原则，以身份先行的交互模型组织四类角色的使用入口，以专业库与事件库的双库架构实现真实知识与真假时事的隔离联动，通过每日定时自检与国标版本生命周期机制保障数据库持续迭代、新旧共存、生效即切换，每次任务运行自动生成鲜明直观的 HTML 更新报告并逐日归档，共五条使用红线，作为 NF 立项与分期建设的需求基线。后续按「机制框架 → 文件灌入 → 校核转正」的节奏滚动细化。</p>
+  </section>
+
+</body>
+</html>

@@ -1,0 +1,18 @@
+# Python 编译缓存
+__pycache__/
+*.pyc
+
+# 安装时生成的机器相关文件（不入库）
+mcp-config.generated.json
+
+# 运行产物
+*.log
+reports/
+
+# 编辑器/系统
+.DS_Store
+Thumbs.db
+
+# 注意：知识库卡片（skill/oilgas-nf-expert/references/ 下）与事件库（data/events/）
+# 属于版本化内容，正常提交；仅 *.draft 草稿卡可选排除（团队协作时改行去掉注释）
+# skill/oilgas-nf-expert/references/**/*.draft.md

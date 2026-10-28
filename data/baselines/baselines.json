@@ -1,0 +1,105 @@
+{
+  "version": "0.1.0",
+  "description": "NF 计算引擎基准回归题库。用途：(1) 阶段3引擎验证与每日回归；(2) 发行包安装自检（装机后跑全部题比对答案）。当前基准题为手工预核算例，待教材手算例题收录后逐题替换为带页码溯源的正式基准题。",
+  "pass_rule": "全部题目通过（相对偏差 ≤ 各题容差），任一失败即冻结对应公式对外输出",
+  "cases": [
+    {
+      "id": "HYD-01",
+      "tool": "pipe_hydraulic",
+      "title": "输油管道沿程水力计算（紊流区）",
+      "source": "手工预核算例（待教材例题替换）",
+      "inputs": {
+        "flow": 100, "flow_unit": "m3/h",
+        "inner_diameter": 300, "diameter_unit": "mm",
+        "pipe_length": 50000, "length_unit": "m",
+        "roughness": 0.05, "roughness_unit": "mm",
+        "density": 850, "density_unit": "kg/m3",
+        "dynamic_viscosity": 20, "viscosity_unit": "mPa.s"
+      },
+      "expected": {
+        "断面平均流速 v": {"value": 0.3931, "tol": 0.01},
+        "雷诺数 Re": {"value": 5012, "tol": 0.01},
+        "沿程水头损失 h_f": {"value": 49.7, "tol": 0.02},
+        "沿程压降 Δp": {"value": 413816, "tol": 0.02, "unit_hint": "Pa"},
+        "流态": {"value": "紊流", "type": "text"}
+      }
+    },
+    {
+      "id": "HYD-E01",
+      "tool": "pipe_hydraulic",
+      "title": "量纲防御：流量误填压力单位必须报错",
+      "source": "闸门三行为规约",
+      "inputs": {
+        "flow": 100, "flow_unit": "MPa",
+        "inner_diameter": 300, "diameter_unit": "mm",
+        "pipe_length": 50000, "length_unit": "m",
+        "roughness": 0.05, "roughness_unit": "mm",
+        "density": 850, "density_unit": "kg/m3",
+        "dynamic_viscosity": 20, "viscosity_unit": "mPa.s"
+      },
+      "expected": {
+        "error_contains": "不属于物理量类别"
+      }
+    },
+    {
+      "id": "THM-01",
+      "tool": "pipe_temperature_drop",
+      "title": "苏霍夫温降正算与反算自洽",
+      "source": "手工预核算例（待教材例题替换）",
+      "inputs": {
+        "mode": "drop",
+        "mass_flow": 100, "flow_unit": "kg/s",
+        "outer_diameter": 0.4, "diameter_unit": "m",
+        "length": 50000, "length_unit": "m",
+        "total_heat_transfer_coefficient": 1.59, "kt_unit": "W/(m2.K)",
+        "environment_temp": 5, "env_temp_unit": "C",
+        "inlet_temp": 50, "inlet_temp_unit": "C",
+        "specific_heat": 2.0, "cp_unit": "kJ/(kg.K)"
+      },
+      "expected": {
+        "末端油温 T_L": {"value": 32.3, "tol": 0.02}
+      },
+      "back_check": {
+        "mode": "required_inlet", "outlet_temp": 32.3072,
+        "expected_name": "所需起点油温 T_R", "value": 50.0, "tol": 0.01
+      }
+    },
+    {
+      "id": "STR-01",
+      "tool": "pipe_wall_thickness",
+      "title": "输气管道设计壁厚计算",
+      "source": "手工预核算例（待教材例题替换）；注意：曾发现腐蚀裕量双重累加BUG，由本基准题捕获后修复",
+      "inputs": {
+        "mode": "design",
+        "design_pressure": 6.4, "pressure_unit": "MPa",
+        "outer_diameter": 508, "diameter_unit": "mm",
+        "yield_strength": 360, "strength_unit": "MPa",
+        "design_factor": 0.5,
+        "weld_factor": 1.0, "temperature_derating": 1.0,
+        "corrosion_allowance": 2, "allowance_unit": "mm"
+      },
+      "expected": {
+        "计算所需壁厚 δ": {"value": 11.03, "tol": 0.02, "unit_hint": "mm"}
+      }
+    },
+    {
+      "id": "STR-02",
+      "tool": "pipe_wall_thickness",
+      "title": "壁厚校核：许用压力回代自洽",
+      "source": "手工预核算例（待教材例题替换）",
+      "inputs": {
+        "mode": "check",
+        "design_pressure": 6.4, "pressure_unit": "MPa",
+        "outer_diameter": 508, "diameter_unit": "mm",
+        "yield_strength": 360, "strength_unit": "MPa",
+        "design_factor": 0.5,
+        "weld_factor": 1.0, "temperature_derating": 1.0,
+        "corrosion_allowance": 2, "allowance_unit": "mm",
+        "nominal_thickness": 11.03, "thickness_unit": "mm"
+      },
+      "expected": {
+        "最大许用压力（MPa）": {"value": 6.4, "tol": 0.02}
+      }
+    }
+  ]
+}

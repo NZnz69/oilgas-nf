@@ -1,0 +1,640 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>油气储运「NF」分发部署方案：自包含发行包与一键安装</title>
+<style>
+/* ========== Reset & Base ========== */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { min-height: 100%; }
+body {
+  position: relative;
+  font-family: -apple-system, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "Segoe UI", "Noto Sans SC", sans-serif;
+  color: #1f2d3d;
+  line-height: 1.7;
+  -webkit-font-smoothing: antialiased;
+  max-width: 860px;
+  margin: 0 auto;
+  padding: 40px 24px;
+  background: linear-gradient(160deg, #f8fafc 0%, #ffffff 45%, #cfe0f5 100%);
+  min-height: 100vh;
+}
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(ellipse 45% 35% at 12% 8%, rgba(255,255,255,0.55) 0%, transparent 60%),
+    radial-gradient(ellipse 40% 30% at 88% 90%, rgba(255,255,255,0.45) 0%, transparent 55%);
+}
+body > * { position: relative; z-index: 1; }
+
+/* ========== 封面 Hero ========== */
+.title {
+  position: relative;
+  overflow: hidden;
+  padding: 56px 40px;
+  text-align: center;
+  background: linear-gradient(135deg, #1e3a5f 0%, #3b82f6 50%, #4f8ef7 100%);
+  color: #ffffff;
+  border-radius: 16px;
+  margin-bottom: 24px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.12);
+}
+.title::before {
+  content: '';
+  position: absolute; inset: 0;
+  background:
+    radial-gradient(ellipse 70% 55% at 18% 82%, rgba(255,255,255,0.12) 0%, transparent 60%),
+    radial-gradient(ellipse 55% 40% at 82% 18%, rgba(255,255,255,0.08) 0%, transparent 55%);
+  pointer-events: none;
+}
+.title > * { position: relative; z-index: 1; }
+.title h1 { font-size: 28px; font-weight: 800; margin: 0 0 14px 0; letter-spacing: 1px; color: #ffffff; }
+.title .accent-line {
+  width: 48px; height: 3px; background: rgba(255,255,255,0.85);
+  margin: 0 auto 18px; border-radius: 2px;
+}
+.title p { font-size: 15px; color: rgba(255,255,255,0.85); margin: 0; line-height: 1.7; }
+.title .badge-row { margin-top: 18px; }
+.title .badge {
+  display: inline-block;
+  margin: 4px 5px;
+  padding: 4px 14px;
+  font-size: 12px;
+  letter-spacing: 1px;
+  color: rgba(255,255,255,0.95);
+  border: 1px solid rgba(255,255,255,0.4);
+  border-radius: 20px;
+  background: rgba(255,255,255,0.12);
+}
+
+/* ========== 章节标题 ========== */
+h1.heading {
+  font-size: 28px;
+  color: #0f1e33;
+  margin: 36px 0 16px 0;
+  font-weight: 700;
+  border-left: 4px solid #3b82f6;
+  padding-left: 16px;
+}
+h2.heading {
+  font-size: 22px;
+  color: #0f1e33;
+  margin: 28px 0 12px;
+  padding-bottom: 8px;
+  border-bottom: 2px solid #c9d6f3;
+  font-weight: 600;
+}
+
+/* ========== 正文 / 列表 ========== */
+.paragraph { font-size: 15px; color: #1f2d3d; line-height: 1.8; margin: 0 0 16px 0; text-indent: 2em; }
+.paragraph.no-indent { text-indent: 0; }
+.list { margin: 0 0 16px 0; padding-left: 24px; font-size: 15px; color: #1f2d3d; line-height: 1.8; }
+.list li { margin-bottom: 8px; }
+.list li::marker { color: #3b82f6; }
+
+/* ========== 正文区卡片化容器 ========== */
+.doc-section {
+  background: #ffffff;
+  border-radius: 14px;
+  padding: 24px 28px;
+  margin: 0 0 16px 0;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.05);
+}
+.doc-section.alt { background: #e6edf6; box-shadow: none; }
+
+/* ========== callout ========== */
+.callout {
+  margin: 0 0 16px 0;
+  padding: 16px 24px;
+  background: #e8f0fe;
+  border-left: 4px solid #3b82f6;
+  border-radius: 8px;
+}
+.callout[data-variant="warning"] { background: #FFF3E0; border-left-color: #d97706; }
+.callout[data-variant="quote"]   { background: #f0fdfa; border-left-color: #14b8a6; }
+.callout p { font-size: 15px; color: #1f2d3d; margin: 0; line-height: 1.8; }
+.callout strong { color: #0f1e33; }
+
+/* ========== 表格 ========== */
+.table-wrap {
+  background: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.05);
+  overflow: hidden;
+  margin: 0 0 16px 0;
+}
+.table-caption {
+  padding: 12px 16px;
+  background: linear-gradient(135deg, #c9d6f3, #e8f0fe);
+  color: #0f1e33;
+  font-size: 14px;
+  font-weight: 600;
+  text-align: center;
+  border-bottom: 1px solid #dbe4ef;
+}
+table.table { width: 100%; border-collapse: collapse; font-size: 14px; table-layout: fixed; }
+table.table thead th {
+  padding: 10px 14px;
+  text-align: left;
+  background: #c9d6f3;
+  color: #0f1e33;
+  font-weight: 700;
+  border-bottom: 2px solid #dbe4ef;
+  word-break: break-word;
+}
+table.table tbody td { padding: 10px 14px; border-bottom: 1px solid #dbe4ef; color: #1f2d3d; word-break: break-word; line-height: 1.7; }
+table.table tbody td strong { color: #0f1e33; }
+table.table tbody td .gain { color: #2E7D32; font-weight: 600; }
+table.table tbody tr:last-child td { border-bottom: none; }
+table.table tbody tr:hover { background: #eef5ff; }
+
+/* ========== stat ========== */
+.stat-grid { display: flex; gap: 16px; margin: 0 0 16px 0; }
+.stat {
+  flex: 1;
+  text-align: center;
+  padding: 24px;
+  background: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+  border-top: 3px solid #3b82f6;
+}
+.stat .num { font-size: 28px; color: #3b82f6; font-weight: 800; line-height: 1.1; }
+.stat .label { font-size: 12px; color: #5b6b80; margin-top: 6px; }
+
+/* ========== timeline ========== */
+.timeline { list-style: none; padding: 0; margin: 0 0 16px 0; }
+.timeline li {
+  position: relative;
+  padding-left: 28px;
+  padding-bottom: 18px;
+  border-left: 2px solid #e8f0fe;
+  margin-left: 6px;
+}
+.timeline li:last-child { border-left-color: transparent; padding-bottom: 0; }
+.timeline li::before {
+  content: '';
+  position: absolute;
+  left: -7px; top: 5px;
+  width: 12px; height: 12px;
+  border-radius: 50%;
+  background: #3b82f6;
+  border: 2px solid #f4f7fb;
+  box-shadow: 0 0 0 2px #e8f0fe;
+}
+.timeline strong { font-size: 14px; color: #2563eb; }
+.timeline p { font-size: 15px; color: #1f2d3d; margin: 4px 0 0 0; line-height: 1.8; }
+
+/* ========== card ========== */
+.card-grid { display: flex; gap: 16px; margin: 0 0 16px 0; }
+.card {
+  flex: 1;
+  background: #ffffff;
+  padding: 24px;
+  border-radius: 12px;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+  border-top: 3px solid #3b82f6;
+}
+.card h3 { font-size: 18px; color: #0f1e33; margin: 0 0 8px 0; font-weight: 700; }
+.card p  { font-size: 14px; color: #5b6b80; margin: 0; line-height: 1.7; }
+.card p strong { color: #2563eb; }
+
+/* ========== divider ========== */
+.divider { margin: 32px 0; text-align: center; user-select: none; }
+.divider .line {
+  display: inline-block;
+  width: 36px;
+  height: 1px;
+  vertical-align: middle;
+  background: linear-gradient(to right, transparent, #e8f0fe);
+}
+.divider .line:last-child { background: linear-gradient(to left, transparent, #e8f0fe); }
+.divider .diamond {
+  display: inline-block;
+  width: 8px; height: 8px;
+  margin: 0 12px;
+  vertical-align: middle;
+  transform: rotate(45deg);
+  background: #3b82f6;
+  border-radius: 1px;
+  box-shadow: 0 0 0 2px #f4f7fb;
+}
+
+/* ========== 尾页 ========== */
+.end_page {
+  margin-top: 24px;
+  padding: 56px 24px;
+  text-align: center;
+  background: linear-gradient(135deg, #c9d6f3 0%, #e8f0fe 100%);
+  border-radius: 16px;
+}
+.end_page h1 { font-size: 28px; color: #0f1e33; margin: 0 0 16px 0; font-weight: 800; }
+.end_page p  { font-size: 15px; color: #5b6b80; margin: 0; line-height: 1.8; }
+
+/* ========== 响应式 ========== */
+@media screen and (max-width: 600px) {
+  body { padding: 16px !important; }
+  h1 { font-size: 22px !important; }
+  h2 { font-size: 18px !important; }
+  h3 { font-size: 16px !important; }
+  .stat-grid, .card-grid { flex-direction: column; }
+}
+
+/* ========== 打印优化 ========== */
+@media print {
+  body {
+    padding: 0 !important;
+    margin: 0 !important;
+    background: #f4f7fb;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+  body::before { display: none; }
+  .title, .end_page { border-radius: 0; box-shadow: none; }
+  .doc-section, .card, .stat, .table-wrap { box-shadow: none; border: 1px solid #dbe4ef; }
+  section { break-inside: auto !important; }
+}
+</style>
+</head>
+<body class="mode-doc" data-palette="ink-blue">
+
+  <!-- ===== 封面 ===== -->
+  <section class="title">
+    <h1>油气储运「NF」分发部署方案</h1>
+    <div class="accent-line"></div>
+    <p>自包含发行包 · 分层一键安装向导 · 三发行变体 · 配套文档之分发篇</p>
+    <div class="badge-row">
+      <span class="badge">资产全打包</span>
+      <span class="badge">环境解压后构建</span>
+      <span class="badge">离线 wheels</span>
+      <span class="badge">安装自检</span>
+      <span class="badge">更新与卸载</span>
+    </div>
+  </section>
+
+  <!-- ===== 一、分发篇定位 ===== -->
+  <h1 class="heading" data-level="1">一、分发篇定位：解决「最后一公里」</h1>
+
+  <div class="doc-section">
+    <p class="paragraph">本文是 NF 文档系列的第三篇：《痛点与解决方案汇总》（定义务篇）回答「做什么」，《实施路线图》（行动篇）回答「怎么一步步做」，本文（分发篇）回答<strong>「做出来之后怎么发到其他设备上」</strong>。目标形态一句话：把 NF 的全部智力资产打成<strong>一个自包含压缩包</strong>，目标设备解压后由<strong>分层一键安装向导</strong>引导构建可运行环境——账号注册、环境安装等机器相关事项在解压后由用户选择完成。</p>
+  </div>
+
+  <div class="stat-grid">
+    <div class="stat">
+      <div class="num">7</div>
+      <div class="label">NF 智力资产全部可进包</div>
+    </div>
+    <div class="stat">
+      <div class="num">8步</div>
+      <div class="label">一键安装向导流程</div>
+    </div>
+    <div class="stat">
+      <div class="num">3</div>
+      <div class="label">发行变体：在线/离线/团队源</div>
+    </div>
+    <div class="stat">
+      <div class="num">2</div>
+      <div class="label">配套脚本：update 与 uninstall</div>
+    </div>
+  </div>
+
+  <div class="doc-section alt">
+    <p class="paragraph no-indent"><strong>分发设计总原则：</strong></p>
+    <ul class="list">
+      <li><strong>凡是「文件」的都进包</strong>——知识库卡片、事件库、引擎源码、基准题、任务定义、身份模板，全部是可拷贝的文件资产；</li>
+      <li><strong>凡是「注册 / 凭据 / 运行时」的留给向导</strong>——Python 环境、MCP 注册、定时任务注册、账号登录、个人身份选择，在目标设备上现场生成；</li>
+      <li><strong>资产与运行环境分离</strong>——包是「内容与逻辑」，向导负责「接线通电」；同一种资产可按用户选择构建出全功能、纯离线或自定义的运行形态。</li>
+    </ul>
+  </div>
+
+  <!-- ===== 二、资产切分 ===== -->
+  <h1 class="heading" data-level="1">二、资产切分：什么进包、什么留在解压后</h1>
+
+  <p class="paragraph">按「文件 vs 注册/凭据/运行时」切分 NF 的全部组成，得到两张清单——这是整个分发方案的地基。</p>
+
+  <div class="table-wrap">
+    <div class="table-caption">表 1 可进包的智力资产清单（7 项）</div>
+    <table class="table" data-caption="表 1 可进包的智力资产清单（7 项）">
+      <colgroup>
+        <col style="width:20%">
+        <col style="width:34%">
+        <col style="width:46%">
+      </colgroup>
+      <thead>
+        <tr>
+          <th>资产</th>
+          <th>进包形态</th>
+          <th>说明</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>计算引擎</strong></td>
+          <td><code>engine/</code>：源码 + requirements.txt + 离线 wheels 依赖包</td>
+          <td>源码天然可拷；<strong>wheels 是关键技巧</strong>——把依赖的安装包预下载进包，目标机器无网也能装</td>
+        </tr>
+        <tr>
+          <td><strong>基准回归题</strong></td>
+          <td><code>data/baselines/</code></td>
+          <td>20–30 道手算例题进包，安装后立即自验「不乱给结果」，同时充当装机验证</td>
+        </tr>
+        <tr>
+          <td><strong>专业知识库</strong></td>
+          <td><code>skill/references/</code> 卡片目录</td>
+          <td>全部带溯源的转正卡片，规范 / 公式 / 介质 / 设备 / 案例分类存放</td>
+        </tr>
+        <tr>
+          <td><strong>事件库</strong></td>
+          <td><code>data/events.db</code>（SQLite 单文件）</td>
+          <td>含已分级的历史事件与辟谣链，新设备开箱即有积累，而非从零重建</td>
+        </tr>
+        <tr>
+          <td><strong>定时任务</strong></td>
+          <td><code>jobs/daily-task.json</code>（任务定义）+ <code>jobs/scripts/</code>（五件事执行脚本）</td>
+          <td>注册状态进不了包，但<strong>定义与脚本可以</strong>——向导照着定义在目标设备一键重建注册</td>
+        </tr>
+        <tr>
+          <td><strong>身份记忆</strong></td>
+          <td><code>identity/identity-template.md</code> 模板</td>
+          <td>个人身份不硬编码（防多人共用串身份），模板进包，由向导引导用户选择后写入本机</td>
+        </tr>
+        <tr>
+          <td><strong>安装向导自身</strong></td>
+          <td><code>install.ps1</code> / <code>install.sh</code>（包根目录）</td>
+          <td>连同 update.ps1、uninstall.ps1 一起随包分发</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="table-wrap">
+    <div class="table-caption">表 2 解压后由向导引导构建的事项（3 类）</div>
+    <table class="table" data-caption="表 2 解压后由向导引导构建的事项（3 类）">
+      <colgroup>
+        <col style="width:22%">
+        <col style="width:40%">
+        <col style="width:38%">
+      </colgroup>
+      <thead>
+        <tr>
+          <th>类别</th>
+          <th>具体事项</th>
+          <th>为何不进包</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>运行时环境</strong></td>
+          <td>Python 解释器、虚拟环境 venv、依赖安装（wheels 离线 / pip 在线）</td>
+          <td>与目标机器架构强相关，打包内嵌体积大且跨平台易错</td>
+        </tr>
+        <tr>
+          <td><strong>平台注册</strong></td>
+          <td>MCP 服务注册、每日定时任务注册、TeleAgent Desktop 本体安装与账号登录</td>
+          <td>注册状态存于平台内部，属于「接线」而非「资产」；凭据必须现场产生</td>
+        </tr>
+        <tr>
+          <td><strong>个人身份</strong></td>
+          <td>身份四选一（学生/教师/运维/设计）、长期记忆初始化</td>
+          <td>跟人不跟包——多人共用同一安装包时避免身份串用</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <aside class="callout" data-variant="tip">
+    <p><strong>切分结论</strong>：NF 的全部「智力资产」（引擎逻辑、知识、基准、任务定义）100% 可进包；留给解压后的只有运行时、平台注册与个人身份三类机器/用户相关事项。「解压即得全部内容，向导负责接线通电」由此成立。</p>
+  </aside>
+
+  <!-- ===== 三、发行包目录结构 ===== -->
+  <h1 class="heading" data-level="1">三、发行包目录结构</h1>
+
+  <div class="doc-section">
+    <p class="paragraph no-indent">标准发行包（解压前为一个 zip）的内部结构如下——三份文档约定的全部机制都能在这棵目录树中找到对应位置：</p>
+    <pre class="code" data-lang="text" style="background:#1e293b;color:#e2e8f0;padding:16px 24px;border-radius:8px;font-size:13px;line-height:1.6;overflow-x:auto;margin:0 0 16px 0;font-family:'Cascadia Code','Fira Code','SF Mono','Source Code Pro',Consolas,monospace;"><code>NF-release/
+├─ install.ps1              # 一键安装向导（Windows）
+├─ update.ps1               # 知识库增量更新（不动引擎）
+├─ uninstall.ps1            # 卸载（回收站式移除）
+├─ manifest.json            # 包清单：版本、卡片数、校验和、适用平台
+├─ skill/                   # ① 薄壳主 Skill
+│  ├─ SKILL.md              #    仅身份路由+工作流（数百行）
+│  └─ references/           #    知识外置，按需读取
+│     ├─ standards/         #    规范卡片（含版本状态链）
+│     ├─ formulas/          #    公式卡片（带溯源）
+│     ├─ media/             #    介质物性卡
+│     ├─ equipment/         #    设备档案卡
+│     ├─ cases/             #    工程案例卡（脱敏）
+│     └─ workflows/         #    决策树与检查清单模板
+├─ engine/                  # ② 计算引擎（MCP）
+│  ├─ src/                  #    源码：水力/热力/强度/阴保模块
+│  ├─ requirements.txt      #    依赖清单
+│  └─ wheels/               #    离线依赖包（离线版才有）
+├─ data/                    # ③ 数据资产
+│  ├─ baselines/            #    基准回归题（20–30 道）
+│  └─ events.db             #    事件库（SQLite，含分级与辟谣链）
+├─ jobs/                    # ④ 定时任务定义
+│  ├─ daily-task.json       #    每日五件事的任务定义
+│  └─ scripts/              #    自检/回归/扫描/报告脚本
+└─ identity/                # ⑤ 身份模板
+   └─ identity-template.md  #    四选一模板，向导引导填写</code></pre>
+    <p class="paragraph no-indent">设计要点：<strong>manifest.json</strong> 记录包版本、卡片数量、关键文件校验和与适用平台——安装向导、更新脚本与后续排查都以它为准；<strong>目录即架构</strong>——skill / engine / data / jobs / identity 五个子目录与实施路线图的「三件套 + 双库 + 任务」一一对应，看目录即懂系统。</p>
+  </div>
+
+  <!-- ===== 四、一键安装向导 ===== -->
+  <h1 class="heading" data-level="1">四、一键安装向导：八步流程</h1>
+
+  <p class="paragraph">解压后运行 <code>install.ps1</code>，向导按八步推进。每一步都<strong>检测先行、选择在后</strong>：缺什么列什么，用户按需选择构建范围，任何一步失败不中断整体——进入降级安装并在安装报告中标注。</p>
+
+  <div class="doc-section">
+    <ol class="timeline">
+      <li>
+        <strong>Step 0 · 环境检测</strong>
+        <p>检测 TeleAgent Desktop 是否安装、Python 是否可用、网络是否连通；缺项逐条列出并给出获取指引，不中断。</p>
+      </li>
+      <li>
+        <strong>Step 1 · 安装范围选择</strong>
+        <p>三选一：<strong>全功能</strong>（引擎+双库+每日任务）/ <strong>仅本地核心</strong>（无每日扫描，纯离线可用）/ <strong>自定义</strong>（勾选计算引擎、定时任务、事件库、每日报告各项）。</p>
+      </li>
+      <li>
+        <strong>Step 2 · 部署 Skill</strong>
+        <p>复制薄壳 Skill 与知识库卡片至本机用户技能目录，登记为可用 Skill。</p>
+      </li>
+      <li>
+        <strong>Step 3 · 构建引擎环境</strong>
+        <p>创建虚拟环境 venv → 优先从包内 wheels <strong>离线</strong>安装依赖 → 无 wheels 则在线 pip 安装 → 两者皆不可用时输出手动安装指引。检测到 TeleAgent Desktop 未安装时，此处弹出下载安装指引并提示账号登录由用户自行完成。</p>
+      </li>
+      <li>
+        <strong>Step 4 · 注册 MCP</strong>
+        <p>将计算引擎注册为本机 MCP 服务（stdio，指向 engine/）；若平台仅开放设置界面，则写好配置文件并弹出精确到点击步骤的指引，由用户点一次「启用」完成。</p>
+      </li>
+      <li>
+        <strong>Step 5 · 重建定时任务</strong>
+        <p>读取 jobs/daily-task.json 定义，在本机注册每日五件事任务；按 Step 1 的选择可跳过。</p>
+      </li>
+      <li>
+        <strong>Step 6 · 身份初始化</strong>
+        <p>交互选择身份（学生/教师/运维/设计）写入本机记忆；可跳过——跳过则首次使用时由 Skill 主动询问，体验一致。</p>
+      </li>
+      <li>
+        <strong>Step 7 · 安装自检与报告</strong>
+        <p>验证 Skill 可发现、MCP ping 通、<strong>运行一道基准题并与标准答案比对</strong>；全项通过才算装好。输出《安装报告.html》：成功项、跳过项、降级项与补装指引一屏呈现。</p>
+      </li>
+    </ol>
+  </div>
+
+  <aside class="callout" data-variant="tip">
+    <p><strong>设计亮点：装机验证复用质量闸门</strong>。Step 7 的基准题比对，就是实施路线图阶段 3 的「基准回归」机制在新设备上的单点复用——任何一台机器装完 NF，跑一道题对答案，通过才算安装成功。<strong>质量保证与分发验证在此合流</strong>：同一套基准题既证明引擎「不乱给结果」，也证明这台机器「装对了」。</p>
+  </aside>
+
+  <div class="divider"><span class="line"></span><span class="diamond"></span><span class="line"></span></div>
+
+  <!-- ===== 五、三发行变体 ===== -->
+  <h1 class="heading" data-level="1">五、三发行变体：同一结构，按需填充</h1>
+
+  <p class="paragraph">三个变体共享同一目录结构与安装流程，差别只在填充物与用途定位——做一次结构设计，覆盖三类受众。</p>
+
+  <div class="table-wrap">
+    <div class="table-caption">表 3 三发行变体对比</div>
+    <table class="table" data-caption="表 3 三发行变体对比">
+      <colgroup>
+        <col style="width:16%">
+        <col style="width:16%">
+        <col style="width:34%">
+        <col style="width:34%">
+      </colgroup>
+      <thead>
+        <tr>
+          <th>变体</th>
+          <th>包体量级</th>
+          <th>与标准结构的差异</th>
+          <th>适用对象</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>在线安装版</strong></td>
+          <td>小（MB 级）</td>
+          <td>wheels 目录为空，Step 3 走网络安装</td>
+          <td>网络条件好的办公室、教研室场景</td>
+        </tr>
+        <tr>
+          <td><strong>离线完整版</strong></td>
+          <td>大（百 MB 级）</td>
+          <td>内嵌全量 wheels，全程无网可装</td>
+          <td>发给学生、现场人员等无技术背景/弱网环境用户，<span class="gain">最稳</span></td>
+        </tr>
+        <tr>
+          <td><strong>团队源版</strong></td>
+          <td>中</td>
+          <td>在线版结构 + git 版本化管理，作为知识库官方源</td>
+          <td>教师团队共建，其他设备 git pull 增量更新</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="doc-section alt">
+    <p class="paragraph no-indent"><strong>变体选择的决策逻辑：</strong></p>
+    <ul class="list">
+      <li>不确定对方网络与技能水平 → <strong>离线完整版</strong>，牺牲包体换确定性；</li>
+      <li>对象是会用 git 的教师团队 → <strong>团队源版</strong>，卡片校核走提交评审，知识库持续演进不分叉；</li>
+      <li>其余常规场景 → <strong>在线安装版</strong>，包小好传。</li>
+    </ul>
+  </div>
+
+  <!-- ===== 六、更新与卸载 ===== -->
+  <h1 class="heading" data-level="1">六、更新与卸载：分发不是一次性动作</h1>
+
+  <p class="paragraph">分发解决「第一天能用」，而 NF 是每日迭代的活库——A 设备每天新增卡片与事件，B 设备的副本会日渐过时。因此发行包必须配套<strong>更新通道</strong>与干净的退出机制。</p>
+
+  <div class="table-wrap">
+    <div class="table-caption">表 4 更新通道与适用场景</div>
+    <table class="table" data-caption="表 4 更新通道与适用场景">
+      <colgroup>
+        <col style="width:22%">
+        <col style="width:44%">
+        <col style="width:34%">
+      </colgroup>
+      <thead>
+        <tr>
+          <th>通道</th>
+          <th>机制</th>
+          <th>适用</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>update.ps1 增量包</strong></td>
+          <td>只携带 manifest 标记之后新增/变更的卡片与事件库差异，更新时<strong>不动引擎与已注册任务</strong></td>
+          <td>在线/离线版的常规更新</td>
+        </tr>
+        <tr>
+          <td><strong>git pull（团队源版）</strong></td>
+          <td>知识库 git 化，各设备拉取官方源最新提交，历史可回溯</td>
+          <td>教师团队共建场景</td>
+        </tr>
+        <tr>
+          <td><strong>整包重发</strong></td>
+          <td>积累到一定量级后重新打离线完整版分发</td>
+          <td>弱网环境、重大版本升级</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="doc-section">
+    <p class="paragraph no-indent"><strong>update.ps1 的安全规则：</strong></p>
+    <ul class="list">
+      <li><strong>只增量、不覆盖用户本机差异</strong>——用户本机新写的个人记忆、易错点记录绝不回滚；</li>
+      <li><strong>校验和核对</strong>——更新前按 manifest 校验文件完整性，不一致即中止并列出差异；</li>
+      <li><strong>更新后自检</strong>——复用安装向导 Step 7 的基准题比对，确认更新未破坏引擎正确性。</li>
+    </ul>
+  </div>
+
+  <div class="doc-section alt">
+    <p class="paragraph no-indent"><strong>uninstall.ps1 的卸载原则：</strong></p>
+    <ul class="list">
+      <li><strong>回收站式移除</strong>——文件移入回收站而非直接删除，给用户反悔余地；</li>
+      <li><strong>注册反解</strong>——撤销 MCP 注册与定时任务注册，但不触碰平台本体与其他 Skill；</li>
+      <li><strong>用户数据保留</strong>——个人身份记忆与个人沉淀内容默认保留并提示位置，由用户自行决定去留。</li>
+    </ul>
+  </div>
+
+  <!-- ===== 七、诚实边界 ===== -->
+  <h1 class="heading" data-level="1">七、三条诚实边界</h1>
+
+  <div class="doc-section">
+    <aside class="callout" data-variant="warning">
+      <p><strong>① TeleAgent Desktop 本体进不了包</strong>：软件安装与账号登录是平台层事项，向导只能检测到「未安装」并给出下载安装指引——这一步用户绕不开，属于「一键」成色的天然上限。</p>
+    </aside>
+    <aside class="callout" data-variant="warning">
+      <p><strong>② 平台注册的自动化程度取决于平台接口</strong>：若桌面端开放命令行/配置文件级注册，Step 4/5 全自动；若仅开放设置界面，则降级为「半自动」——配置写好、指引精确到点击步骤，用户点一次「启用」完成。方案按两种情形都做了设计。</p>
+    </aside>
+    <aside class="callout" data-variant="warning">
+      <p><strong>③ 离线 wheels 与包体是一对矛盾</strong>：用「三发行变体」化解而非硬塞一个大包——离线完整版体积代价只由需要它的受众承担。</p>
+    </aside>
+  </div>
+
+  <div class="doc-section alt">
+    <p class="paragraph no-indent"><strong>与其他分发方式的衔接</strong>（本方案为基座，按需叠加）：</p>
+    <ul class="list">
+      <li><strong>Git 仓库</strong>＝在线安装版结构 + git 化（即团队源版）；</li>
+      <li><strong>共享 MCP 服务器</strong>＝向导 Step 4 改为「填远程 URL」的变体，适合教研室统一引擎版本（需重新评估数据边界）；</li>
+      <li><strong>中心—辐射同步</strong>＝团队源版 + 一台常开主机作官方源，其余设备定期拉取快照，解决多设备更新分叉。</li>
+    </ul>
+  </div>
+
+  <!-- ===== 尾页 ===== -->
+  <section class="title end_page">
+    <h1>分发方案就绪 · 下一步进入骨架搭建</h1>
+    <p>本方案与《实施路线图》衔接：路线图阶段 1–4 完成「搭建骨架 → 灌入内容 → 验证引擎 → 配置任务」后，按本方案打包目录结构组织产物，即可产出第一版自包含发行包并按八步向导完成目标设备部署。三份文档至此闭环：定义务篇（做什么）→ 行动篇（怎么做）→ 分发篇（怎么发）。</p>
+    <p style="margin-top:12px;">配套文档：《油气储运NF痛点与解决方案汇总》（定义务篇）｜《油气储运NF实施路线图》（行动篇）｜本文（分发篇）</p>
+  </section>
+
+</body>
+</html>

@@ -1,0 +1,747 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>油气储运「NF」实施路线图：从需求基线到落地</title>
+<style>
+/* ========== Reset & Base ========== */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { min-height: 100%; }
+body {
+  position: relative;
+  font-family: -apple-system, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "Segoe UI", "Noto Sans SC", sans-serif;
+  color: #1f2d3d;
+  line-height: 1.7;
+  -webkit-font-smoothing: antialiased;
+  max-width: 860px;
+  margin: 0 auto;
+  padding: 40px 24px;
+  background: linear-gradient(160deg, #f8fafc 0%, #ffffff 45%, #cfe0f5 100%);
+  min-height: 100vh;
+}
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(ellipse 45% 35% at 12% 8%, rgba(255,255,255,0.55) 0%, transparent 60%),
+    radial-gradient(ellipse 40% 30% at 88% 90%, rgba(255,255,255,0.45) 0%, transparent 55%);
+}
+body > * { position: relative; z-index: 1; }
+
+/* ========== 封面 Hero ========== */
+.title {
+  position: relative;
+  overflow: hidden;
+  padding: 56px 40px;
+  text-align: center;
+  background: linear-gradient(135deg, #1e3a5f 0%, #3b82f6 50%, #4f8ef7 100%);
+  color: #ffffff;
+  border-radius: 16px;
+  margin-bottom: 24px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.12);
+}
+.title::before {
+  content: '';
+  position: absolute; inset: 0;
+  background:
+    radial-gradient(ellipse 70% 55% at 18% 82%, rgba(255,255,255,0.12) 0%, transparent 60%),
+    radial-gradient(ellipse 55% 40% at 82% 18%, rgba(255,255,255,0.08) 0%, transparent 55%);
+  pointer-events: none;
+}
+.title > * { position: relative; z-index: 1; }
+.title h1 { font-size: 28px; font-weight: 800; margin: 0 0 14px 0; letter-spacing: 1px; color: #ffffff; }
+.title .accent-line {
+  width: 48px; height: 3px; background: rgba(255,255,255,0.85);
+  margin: 0 auto 18px; border-radius: 2px;
+}
+.title p { font-size: 15px; color: rgba(255,255,255,0.85); margin: 0; line-height: 1.7; }
+.title .badge-row { margin-top: 18px; }
+.title .badge {
+  display: inline-block;
+  margin: 4px 5px;
+  padding: 4px 14px;
+  font-size: 12px;
+  letter-spacing: 1px;
+  color: rgba(255,255,255,0.95);
+  border: 1px solid rgba(255,255,255,0.4);
+  border-radius: 20px;
+  background: rgba(255,255,255,0.12);
+}
+
+/* ========== 章节标题 ========== */
+h1.heading {
+  font-size: 28px;
+  color: #0f1e33;
+  margin: 36px 0 16px 0;
+  font-weight: 700;
+  border-left: 4px solid #3b82f6;
+  padding-left: 16px;
+}
+h2.heading {
+  font-size: 22px;
+  color: #0f1e33;
+  margin: 28px 0 12px;
+  padding-bottom: 8px;
+  border-bottom: 2px solid #c9d6f3;
+  font-weight: 600;
+}
+
+/* ========== 正文 / 列表 ========== */
+.paragraph { font-size: 15px; color: #1f2d3d; line-height: 1.8; margin: 0 0 16px 0; text-indent: 2em; }
+.paragraph.no-indent { text-indent: 0; }
+.list { margin: 0 0 16px 0; padding-left: 24px; font-size: 15px; color: #1f2d3d; line-height: 1.8; }
+.list li { margin-bottom: 8px; }
+.list li::marker { color: #3b82f6; }
+
+/* ========== 正文区卡片化容器 ========== */
+.doc-section {
+  background: #ffffff;
+  border-radius: 14px;
+  padding: 24px 28px;
+  margin: 0 0 16px 0;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.05);
+}
+.doc-section.alt { background: #e6edf6; box-shadow: none; }
+
+/* ========== callout ========== */
+.callout {
+  margin: 0 0 16px 0;
+  padding: 16px 24px;
+  background: #e8f0fe;
+  border-left: 4px solid #3b82f6;
+  border-radius: 8px;
+}
+.callout[data-variant="warning"] { background: #FFF3E0; border-left-color: #d97706; }
+.callout[data-variant="quote"]   { background: #f0fdfa; border-left-color: #14b8a6; }
+.callout p { font-size: 15px; color: #1f2d3d; margin: 0; line-height: 1.8; }
+.callout strong { color: #0f1e33; }
+
+/* ========== 表格 ========== */
+.table-wrap {
+  background: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.05);
+  overflow: hidden;
+  margin: 0 0 16px 0;
+}
+.table-caption {
+  padding: 12px 16px;
+  background: linear-gradient(135deg, #c9d6f3, #e8f0fe);
+  color: #0f1e33;
+  font-size: 14px;
+  font-weight: 600;
+  text-align: center;
+  border-bottom: 1px solid #dbe4ef;
+}
+table.table { width: 100%; border-collapse: collapse; font-size: 14px; table-layout: fixed; }
+table.table thead th {
+  padding: 10px 14px;
+  text-align: left;
+  background: #c9d6f3;
+  color: #0f1e33;
+  font-weight: 700;
+  border-bottom: 2px solid #dbe4ef;
+  word-break: break-word;
+}
+table.table tbody td { padding: 10px 14px; border-bottom: 1px solid #dbe4ef; color: #1f2d3d; word-break: break-word; line-height: 1.7; }
+table.table tbody td strong { color: #0f1e33; }
+table.table tbody td .gain { color: #2E7D32; font-weight: 600; }
+table.table tbody tr:last-child td { border-bottom: none; }
+table.table tbody tr:hover { background: #eef5ff; }
+
+/* ========== stat ========== */
+.stat-grid { display: flex; gap: 16px; margin: 0 0 16px 0; }
+.stat {
+  flex: 1;
+  text-align: center;
+  padding: 24px;
+  background: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+  border-top: 3px solid #3b82f6;
+}
+.stat .num { font-size: 28px; color: #3b82f6; font-weight: 800; line-height: 1.1; }
+.stat .label { font-size: 12px; color: #5b6b80; margin-top: 6px; }
+
+/* ========== timeline ========== */
+.timeline { list-style: none; padding: 0; margin: 0 0 16px 0; }
+.timeline li {
+  position: relative;
+  padding-left: 28px;
+  padding-bottom: 18px;
+  border-left: 2px solid #e8f0fe;
+  margin-left: 6px;
+}
+.timeline li:last-child { border-left-color: transparent; padding-bottom: 0; }
+.timeline li::before {
+  content: '';
+  position: absolute;
+  left: -7px; top: 5px;
+  width: 12px; height: 12px;
+  border-radius: 50%;
+  background: #3b82f6;
+  border: 2px solid #f4f7fb;
+  box-shadow: 0 0 0 2px #e8f0fe;
+}
+.timeline strong { font-size: 14px; color: #2563eb; }
+.timeline p { font-size: 15px; color: #1f2d3d; margin: 4px 0 0 0; line-height: 1.8; }
+
+/* ========== card ========== */
+.card-grid { display: flex; gap: 16px; margin: 0 0 16px 0; }
+.card {
+  flex: 1;
+  background: #ffffff;
+  padding: 24px;
+  border-radius: 12px;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+  border-top: 3px solid #3b82f6;
+}
+.card h3 { font-size: 18px; color: #0f1e33; margin: 0 0 8px 0; font-weight: 700; }
+.card p  { font-size: 14px; color: #5b6b80; margin: 0; line-height: 1.7; }
+.card p strong { color: #2563eb; }
+
+/* ========== divider ========== */
+.divider { margin: 32px 0; text-align: center; user-select: none; }
+.divider .line {
+  display: inline-block;
+  width: 36px;
+  height: 1px;
+  vertical-align: middle;
+  background: linear-gradient(to right, transparent, #e8f0fe);
+}
+.divider .line:last-child { background: linear-gradient(to left, transparent, #e8f0fe); }
+.divider .diamond {
+  display: inline-block;
+  width: 8px; height: 8px;
+  margin: 0 12px;
+  vertical-align: middle;
+  transform: rotate(45deg);
+  background: #3b82f6;
+  border-radius: 1px;
+  box-shadow: 0 0 0 2px #f4f7fb;
+}
+
+/* ========== 尾页 ========== */
+.end_page {
+  margin-top: 24px;
+  padding: 56px 24px;
+  text-align: center;
+  background: linear-gradient(135deg, #c9d6f3 0%, #e8f0fe 100%);
+  border-radius: 16px;
+}
+.end_page h1 { font-size: 28px; color: #0f1e33; margin: 0 0 16px 0; font-weight: 800; }
+.end_page p  { font-size: 15px; color: #5b6b80; margin: 0; line-height: 1.8; }
+
+/* ========== 响应式 ========== */
+@media screen and (max-width: 600px) {
+  body { padding: 16px !important; }
+  h1 { font-size: 22px !important; }
+  h2 { font-size: 18px !important; }
+  h3 { font-size: 16px !important; }
+  .stat-grid, .card-grid { flex-direction: column; }
+}
+
+/* ========== 打印优化 ========== */
+@media print {
+  body {
+    padding: 0 !important;
+    margin: 0 !important;
+    background: #f4f7fb;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+  body::before { display: none; }
+  .title, .end_page { border-radius: 0; box-shadow: none; }
+  .doc-section, .card, .stat, .table-wrap { box-shadow: none; border: 1px solid #dbe4ef; }
+  section { break-inside: auto !important; }
+}
+</style>
+</head>
+<body class="mode-doc" data-palette="ink-blue">
+
+  <!-- ===== 封面 ===== -->
+  <section class="title">
+    <h1>油气储运「NF」实施路线图</h1>
+    <div class="accent-line"></div>
+    <p>从需求基线到落地 · 五个实施阶段 · 分工与验收标准 · 配套文档之行动篇</p>
+    <div class="badge-row">
+      <span class="badge">阶段 0 · 准备</span>
+      <span class="badge">阶段 1 · 机制框架</span>
+      <span class="badge">阶段 2 · 内容灌入</span>
+      <span class="badge">阶段 3 · 引擎验证</span>
+      <span class="badge">阶段 4 · 定时任务</span>
+      <span class="badge">阶段 5 · 角色扩展</span>
+    </div>
+  </section>
+
+  <!-- ===== 一、实施总纲 ===== -->
+  <h1 class="heading" data-level="1">一、实施总纲</h1>
+
+  <div class="doc-section">
+    <p class="paragraph">本文是《油气储运NF痛点与解决方案汇总》（需求基线）的<strong>行动篇</strong>：基线文档定义了 NF「做什么、必须满足什么」，本文回答「怎么一步步做出来」。NF 的全部机制都可以在 TeleAgent Desktop 上用三块现成能力搭建——<strong>Skill 系统</strong>（角色路由与工作流）、<strong>MCP 本地服务</strong>（确定性计算引擎）、<strong>定时任务</strong>（每日自检与报告），不需要另行开发桌面软件。</p>
+  </div>
+
+  <div class="stat-grid">
+    <div class="stat">
+      <div class="num">5</div>
+      <div class="label">实施阶段：从准备到角色扩展</div>
+    </div>
+    <div class="stat">
+      <div class="num">3</div>
+      <div class="label">落地原则：先机制后内容等</div>
+    </div>
+    <div class="stat">
+      <div class="num">2</div>
+      <div class="label">现成平台能力：Skill + MCP + 定时任务</div>
+    </div>
+    <div class="stat">
+      <div class="num">0</div>
+      <div class="label">预置内容：白盒启动，从零灌入</div>
+    </div>
+  </div>
+
+  <div class="doc-section alt">
+    <p class="paragraph no-indent"><strong>三条落地原则（贯穿全程）：</strong></p>
+    <ul class="list">
+      <li><strong>先机制后内容</strong>——先把骨架搭好、规则立住，再灌入内容；机制不牢，内容越多越乱；</li>
+      <li><strong>先窄后宽</strong>——一期只做一个切入场景，跑通验证后再扩展角色，贪多必散；</li>
+      <li><strong>先跑通再扩展</strong>——每个阶段都有明确验收标准，未通过不进入下一阶段。</li>
+    </ul>
+  </div>
+
+  <div class="table-wrap">
+    <div class="table-caption">表 1 五阶段总览</div>
+    <table class="table" data-caption="表 1 五阶段总览">
+      <colgroup>
+        <col style="width:15%">
+        <col style="width:27%">
+        <col style="width:40%">
+        <col style="width:18%">
+      </colgroup>
+      <thead>
+        <tr>
+          <th>阶段</th>
+          <th>核心目标</th>
+          <th>主要产出</th>
+          <th>主导方</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>阶段 0<br>准备</strong></td>
+          <td>备齐真实原料，定下切入场景与校核人</td>
+          <td>正版规范电子版、教材、手算例题、实验指导书；两项关键决定</td>
+          <td>用户</td>
+        </tr>
+        <tr>
+          <td><strong>阶段 1<br>机制框架</strong></td>
+          <td>搭起可运行的空骨架</td>
+          <td>主 Skill（身份先行路由）、MCP 计算引擎（四个模块）、白盒空知识库</td>
+          <td>助手</td>
+        </tr>
+        <tr>
+          <td><strong>阶段 2<br>内容灌入</strong></td>
+          <td>真实文件转化为转正卡片</td>
+          <td>一期 41 张卡片：规范 15 + 公式 20 + 介质 6，全部带溯源</td>
+          <td>用户 + 助手</td>
+        </tr>
+        <tr>
+          <td><strong>阶段 3<br>引擎验证</strong></td>
+          <td>用基准题证明「不乱给结果」</td>
+          <td>基准回归通过记录；计算书样例；冻结-修复机制生效</td>
+          <td>助手</td>
+        </tr>
+        <tr>
+          <td><strong>阶段 4<br>定时任务</strong></td>
+          <td>数据库活起来，每日自检与报告</td>
+          <td>每日五件事任务编排；HTML 更新报告逐日归档</td>
+          <td>助手配置<br>用户验收</td>
+        </tr>
+        <tr>
+          <td><strong>阶段 5<br>角色扩展</strong></td>
+          <td>从单场景扩展到四类角色</td>
+          <td>课程设计决策树、教师题库模板、运维故障卡、设计选型卡，分批加载</td>
+          <td>用户 + 助手</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <aside class="callout" data-variant="tip">
+    <p><strong>时间口径说明</strong>：阶段 0 与阶段 1 可立即启动、相互独立；阶段 2–3 的节奏取决于文件数量与人工校核速度（内容质量优先于速度）；阶段 4 配置完成后即持续自动运行。各阶段以验收标准（见第八章）而非固定日历为进入下一阶段的判据。</p>
+  </aside>
+
+  <!-- ===== 二、阶段 0 ===== -->
+  <h1 class="heading" data-level="1">二、阶段 0 · 准备：原料与两个决定</h1>
+
+  <p class="paragraph">NF 的一切建立在真实文件之上（反幻觉防线一：白盒启动），所以第一步不是搭系统，而是盘点你手头的「原料」。原料的完备程度直接决定一期效果。</p>
+
+  <div class="table-wrap">
+    <div class="table-caption">表 2 阶段 0 原料清单</div>
+    <table class="table" data-caption="表 2 阶段 0 原料清单">
+      <colgroup>
+        <col style="width:16%">
+        <col style="width:36%">
+        <col style="width:14%">
+        <col style="width:34%">
+      </colgroup>
+      <thead>
+        <tr>
+          <th>材料类别</th>
+          <th>具体内容</th>
+          <th>一期建议量</th>
+          <th>用途</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>正版规范电子版</strong></td>
+          <td>GB/T 9711、GB 50251、GB 50369 及常用 SY/T 系列（官方渠道获取）</td>
+          <td>10–15 本</td>
+          <td>规范卡片来源；版本状态联网核实的对象</td>
+        </tr>
+        <tr>
+          <td><strong>教材与讲义</strong></td>
+          <td>水力学、传热、油气集输、腐蚀与防护等核心教材</td>
+          <td>3–5 本</td>
+          <td>公式卡片与参数物理意义解释的来源</td>
+        </tr>
+        <tr>
+          <td><strong>手算例题</strong></td>
+          <td>手算过程完整的教材例题、课程设计真题</td>
+          <td>20–30 道</td>
+          <td><strong>阶段 3 基准回归的基准题</strong>——引擎对错的裁判</td>
+        </tr>
+        <tr>
+          <td><strong>实验指导书</strong></td>
+          <td>流阻测定、物性检测、腐蚀测试、流量计标定等</td>
+          <td>按需</td>
+          <td>实验卡来源（一期可选，二期主线）</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="doc-section">
+    <p class="paragraph no-indent"><strong>同时做两个决定：</strong></p>
+    <ul class="list">
+      <li><strong>决定一 · 首个切入场景</strong>：建议选择「学生日常学习」——规范查询 + 公式计算，使用频率最高、验证反馈最快，且是后续所有场景的地基。若你更倾向课程设计引导或教师资源建设，在阶段 1 开始前告知即可，机制框架不受影响；</li>
+      <li><strong>决定二 · 校核人</strong>：你自己或 1–2 位专业教师，负责阶段 2 的卡片校核转正与阶段 3 的回归结果复核。<strong>这是不可省略的角色</strong>——反幻觉与计算可靠性承诺的兑现，最终都落在人工校核这一环。</li>
+    </ul>
+  </div>
+
+  <aside class="callout" data-variant="warning">
+    <p><strong>原料红线</strong>：规范电子版必须来自官方正版渠道——非官方渠道流传的「电子版」可能被篡改、缺页、混入旧版内容，是数据污染源（需求基线 8.1 收录红线）；同时全部文件在本地解析、不上传不出电脑（数据边界）。</p>
+  </aside>
+
+  <!-- ===== 三、阶段 1 ===== -->
+  <h1 class="heading" data-level="1">三、阶段 1 · 机制框架：搭起可运行的空骨架</h1>
+
+  <p class="paragraph">用平台现成工具搭三件套。此阶段产出的是一个「空但能跑」的系统——知识库里一张卡片都没有（刻意的白盒启动），但全部规则已经立住。</p>
+
+  <div class="card-grid" data-cols="3">
+    <div class="card">
+      <h3>① 主 Skill</h3>
+      <p>用 <strong>skill-creator</strong> 搭建。SKILL.md 只写<strong>身份先行路由</strong>与工作流（首次使用询问身份→主推/次推分流→身份可切换），知识全部外置 <strong>references/</strong> 目录：规范卡、公式卡、介质卡、决策树、清单模板各占子目录——SKILL.md 保持精简，不稀释注意力。</p>
+    </div>
+    <div class="card">
+      <h3>② 计算引擎 MCP</h3>
+      <p>用 <strong>mcp-builder</strong> 搭建本地 stdio 服务。一期四模块：<strong>单位换算与量纲校验</strong>、<strong>水力计算</strong>（雷诺数→流态判别→沿程阻力→压降）、<strong>温降计算</strong>、<strong>壁厚计算</strong>；每个接口固定输出计算书（输入、公式版本、中间量、判据对照）。</p>
+    </div>
+    <div class="card">
+      <h3>③ 白盒知识库</h3>
+      <p>知识库目录<strong>空库初始化</strong>——此时库里一张卡都没有，这是反幻觉防线一的落实。空库状态下提问会得到「未收录，建议补充文件」，这个「诚实的不知道」正是防线三在工作。</p>
+    </div>
+  </div>
+
+  <div class="doc-section alt">
+    <p class="paragraph no-indent"><strong>阶段 1 验收要点：</strong>骨架可运行、规则可见效——空库可正确回答「未收录」而非编造；MCP 四模块可被调用并返回带计算书的结果（数值正确性留待阶段 3 验证）；身份先行路由正确——首次使用主动询问身份，选定后相关入口置顶、其余降级可及，一句话切换后主推内容立即重排。</p>
+  </div>
+
+  <!-- ===== 四、阶段 2 ===== -->
+  <h1 class="heading" data-level="1">四、阶段 2 · 内容灌入：真实文件变成转正卡片</h1>
+
+  <p class="paragraph">本阶段开始把阶段 0 的原料转化为知识库内容，节奏是「解析一批、校核一批、转正一批」，全部执行需求基线 6.1 的五步流程：</p>
+
+  <div class="doc-section">
+    <ol class="timeline">
+      <li>
+        <strong>① 文件投喂</strong>
+        <p>用户把规范、教材、例题文件放入指定目录，全程本地解析，不出电脑。</p>
+      </li>
+      <li>
+        <strong>② 本地解析</strong>
+        <p>PDF 与 OCR 解析保留条文号、页码与表格结构，形成带精确定位信息的原文片段。</p>
+      </li>
+      <li>
+        <strong>③ 卡片草稿</strong>
+        <p>助手由解析片段生成卡片草稿，自动携带溯源（文件名、页码、条文号、提取时间），统一标注「待校核」。</p>
+      </li>
+      <li>
+        <strong>④ 人工校核</strong>
+        <p>校核人对照原文逐条核对草稿，修正错漏后转正——<strong>这步由你或专业教师执行，不可省略</strong>。</p>
+      </li>
+      <li>
+        <strong>⑤ 入库生效</strong>
+        <p>只有转正卡片参与回答与计算；「未转正不参与回答」作为规则写入 Skill 强制执行。</p>
+      </li>
+    </ol>
+  </div>
+
+  <div class="stat-grid">
+    <div class="stat">
+      <div class="num">15</div>
+      <div class="label">规范卡片（一期目标）</div>
+    </div>
+    <div class="stat">
+      <div class="num">20</div>
+      <div class="label">公式卡片（一期目标）</div>
+    </div>
+    <div class="stat">
+      <div class="num">6</div>
+      <div class="label">介质物性卡（一期目标）</div>
+    </div>
+    <div class="stat">
+      <div class="num">100%</div>
+      <div class="label">转正卡片必须携带溯源</div>
+    </div>
+  </div>
+
+  <div class="divider"><span class="line"></span><span class="diamond"></span><span class="line"></span></div>
+
+  <!-- ===== 五、阶段 3 ===== -->
+  <h1 class="heading" data-level="1">五、阶段 3 · 引擎验证：证明「不乱给结果」</h1>
+
+  <p class="paragraph">阶段 1 搭好的计算引擎此时接受检验——用阶段 0 收集的手算例题做<strong>基准回归</strong>：每道题的教材手算答案与引擎输出逐单元比对（雷诺数、流态、沿程阻力、压降逐项核对，不是只对最终数）。</p>
+
+  <div class="doc-section">
+    <ul class="list">
+      <li><strong>回归对象</strong>：20–30 道手算例题（教材例题 + 课程设计真题），覆盖一期四模块全部公式；</li>
+      <li><strong>通过标准</strong>：全部基准题通过，偏差在有效位数内一致；</li>
+      <li><strong>阻断机制</strong>：任何公式偏差超过阈值（如 0.1%）即冻结该公式对外输出，修复并重新通过回归后才恢复——<strong>未通过回归的公式，NF 就是拒算</strong>，这是「不乱给结果」承诺的实际兑现；</li>
+      <li><strong>计算书核验</strong>：抽取若干结果，由校核人按计算书逐项手工复算，确认七项内容（输入、公式版本、常数来源、中间量、结果、判据对照、告警）完整可核。</li>
+    </ul>
+  </div>
+
+  <aside class="callout" data-variant="warning">
+    <p><strong>为什么必须人工复核</strong>：基准题答案本身也可能有印刷错误或版本差异——回归发现引擎与教材不一致时，先核对教材原文再判定是谁错了。这类「冲突排查」记录本身也是宝贵的知识库内容（易错点卡片素材）。</p>
+  </aside>
+
+  <!-- ===== 六、阶段 4 ===== -->
+  <h1 class="heading" data-level="1">六、阶段 4 · 定时任务：让数据库活起来</h1>
+
+  <p class="paragraph">用平台 <strong>scheduler</strong> 建立每日定时任务，按需求基线 8.3 编排五件事，并落实 8.4 的每日报告机制：</p>
+
+  <div class="doc-section">
+    <ol class="timeline">
+      <li>
+        <strong>① 数据库健康自检</strong>
+        <p>卡片元数据完整性、引用死链、重复与孤儿卡片、逾期复查标记。</p>
+      </li>
+      <li>
+        <strong>② 计算引擎回归</strong>
+        <p>基准题集每日全量回归（联动闸门二），偏差超阈即冻结告警。</p>
+      </li>
+      <li>
+        <strong>③ 官方渠道扫描</strong>
+        <p>标准发布、实施、替代、废止动态检测，触发核实流程与生效日切换。</p>
+      </li>
+      <li>
+        <strong>④ 事件库分级收录</strong>
+        <p>事故通报、政策、辟谣、撤稿按五级可信度收录入独立事件库。</p>
+      </li>
+      <li>
+        <strong>⑤ 生成 HTML 更新报告</strong>
+        <p>本次运行结果自动生成鲜明直观的报告（三色横幅、状态色清单、分级徽章、异常置顶），按日期命名归档（如「NF更新报告-YYYY-MM-DD.html」），逐日累积成运行史。</p>
+      </li>
+    </ol>
+  </div>
+
+  <div class="doc-section alt">
+    <p class="paragraph no-indent"><strong>阶段 4 验收要点：</strong>连续 7 天定时运行无中断；报告逐日归档无缺漏；抽查任意一天报告，其自检、回归、动态结果与数据库实际状态一致；异常项（若出现）在报告顶部可见且有处置记录。</p>
+  </div>
+
+  <aside class="callout" data-variant="warning">
+    <p><strong>诚实边界</strong>：每日扫描受网络可达性与官方平台更新节奏影响，不承诺零延迟捕获，时效性以官方公告为准（需求基线红线⑤）。报告中的事件条目仅作线索，涉标准变更须经核实与人工确认才改动专业库。</p>
+  </aside>
+
+  <!-- ===== 七、阶段 5 ===== -->
+  <h1 class="heading" data-level="1">七、阶段 5 · 角色扩展：从单场景到四类角色</h1>
+
+  <p class="paragraph">机制跑通、一期内容转正、每日任务运转后，按「依赖关系」而非「平均用力」的顺序扩展角色——每个扩展都复用同一套机制，只是加载不同的工作流与卡片类型：</p>
+
+  <div class="table-wrap">
+    <div class="table-caption">表 3 角色扩展顺序与前置条件</div>
+    <table class="table" data-caption="表 3 角色扩展顺序与前置条件">
+      <colgroup>
+        <col style="width:12%">
+        <col style="width:16%">
+        <col style="width:44%">
+        <col style="width:28%">
+      </colgroup>
+      <thead>
+        <tr>
+          <th>顺序</th>
+          <th>角色</th>
+          <th>加载内容</th>
+          <th>前置条件</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>第 1 批</strong></td>
+          <td>学生 · 课设毕设</td>
+          <td>选型决策树（管径→壁厚→管材→防腐→阴保→安全间距→试压）、分阶段检查清单、说明书模板与规范引用格式</td>
+          <td>一期规范卡与公式卡已转正；引擎回归通过</td>
+        </tr>
+        <tr>
+          <td><strong>第 2 批</strong></td>
+          <td>教师</td>
+          <td>章节自测题生成模板、课程设计任务书模板、讲义关联定位（规范变更推送联动）</td>
+          <td>学生场景跑通；规范状态链已核实</td>
+        </tr>
+        <tr>
+          <td><strong>第 3 批</strong></td>
+          <td>场站运维</td>
+          <td>故障卡（表象→原因→排查→处置）、作业卡与作业票清单、应急卡（介质×事故矩阵）、维保卡</td>
+          <td>需补充现场真实资料（脱敏）；事件库分级机制已运转</td>
+        </tr>
+        <tr>
+          <td><strong>第 4 批</strong></td>
+          <td>工程设计</td>
+          <td>选型取值卡、工况校核矩阵、材料腐蚀对照卡、报审资料检查清单、在役评估链路卡</td>
+          <td>规范卡覆盖面扩展至设计规范；工程案例入库</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <aside class="callout" data-variant="tip">
+    <p><strong>扩展节奏由内容决定</strong>：机制框架在阶段 1 已一次性建好，后续扩展不再改机制、只灌内容——扩展慢不是技术问题，而是「权威内容需要专业输入」的必然节奏（需求基线分期落地的诚实版）。</p>
+  </aside>
+
+  <!-- ===== 八、里程碑与验收 ===== -->
+  <h1 class="heading" data-level="1">八、分工总表与里程碑验收</h1>
+
+  <div class="table-wrap">
+    <div class="table-caption">表 4 分工总表</div>
+    <table class="table" data-caption="表 4 分工总表">
+      <colgroup>
+        <col style="width:26%">
+        <col style="width:16%">
+        <col style="width:58%">
+      </colgroup>
+      <thead>
+        <tr>
+          <th>事项</th>
+          <th>谁做</th>
+          <th>说明</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Skill / MCP / 定时任务 / 报告模板</strong></td>
+          <td>助手</td>
+          <td>阶段 1、3、4 全程搭建与配置</td>
+        </tr>
+        <tr>
+          <td><strong>文件提供</strong></td>
+          <td>用户</td>
+          <td>阶段 0 备料，阶段 2 起持续补充（官方正版渠道）</td>
+        </tr>
+        <tr>
+          <td><strong>卡片起草</strong></td>
+          <td>助手</td>
+          <td>带溯源元数据的草稿，标注「待校核」</td>
+        </tr>
+        <tr>
+          <td><strong>卡片校核转正</strong></td>
+          <td>用户 / 专业教师</td>
+          <td>专业把关，<span class="gain">不可省略</span>——反幻觉与准确性承诺的兑现环节</td>
+        </tr>
+        <tr>
+          <td><strong>规范状态核实</strong></td>
+          <td>助手联网核实 + 用户确认</td>
+          <td>每条状态带确认日期与复查期</td>
+        </tr>
+        <tr>
+          <td><strong>日常使用反馈</strong></td>
+          <td>用户</td>
+          <td>使用中发现的问题驱动卡片修订与功能迭代</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="table-wrap">
+    <div class="table-caption">表 5 各阶段里程碑与验收标准</div>
+    <table class="table" data-caption="表 5 各阶段里程碑与验收标准">
+      <colgroup>
+        <col style="width:14%">
+        <col style="width:38%">
+        <col style="width:48%">
+      </colgroup>
+      <thead>
+        <tr>
+          <th>阶段</th>
+          <th>完成标志</th>
+          <th>可验证证据</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>阶段 0</strong></td>
+          <td>原料就绪、两项决定敲定</td>
+          <td>文件清单确认（类别、数量、来源渠道合规）；切入场景与校核人明确</td>
+        </tr>
+        <tr>
+          <td><strong>阶段 1</strong></td>
+          <td>空骨架可运行</td>
+          <td>空库提问返回「未收录」而非编造；MCP 四模块调用成功并返回计算书结构；身份询问、主推次推分流与切换正确</td>
+        </tr>
+        <tr>
+          <td><strong>阶段 2</strong></td>
+          <td>一期卡片达标</td>
+          <td>41 张卡片全部转正，<span class="gain">每张溯源可回查原文</span>；抽查任意卡片来源标注与原始文件一致</td>
+        </tr>
+        <tr>
+          <td><strong>阶段 3</strong></td>
+          <td>引擎验证通过</td>
+          <td>基准题 100% 通过；计算书七项完整；冻结-修复机制实测生效（可人为注入错误验证）</td>
+        </tr>
+        <tr>
+          <td><strong>阶段 4</strong></td>
+          <td>每日任务稳定运行</td>
+          <td>连续 7 天报告归档无缺漏；报告内容与数据库实际状态一致；异常项有处置记录</td>
+        </tr>
+        <tr>
+          <td><strong>阶段 5</strong></td>
+          <td>角色分批加载</td>
+          <td>每批角色工作流实测可用；对应卡片类型转正率 100%</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="doc-section">
+    <p class="paragraph no-indent"><strong>贯穿全程的三条不可妥协项：</strong></p>
+    <ul class="list">
+      <li><strong>未转正的卡片不参与回答</strong>——任何阶段都不为进度牺牲这条规则；</li>
+      <li><strong>未通过回归的公式拒算</strong>——宁可拒绝计算，不输出未验证的数值；</li>
+      <li><strong>非官方渠道资料不入库</strong>——版权与准确性双重红线。</li>
+    </ul>
+  </div>
+
+  <!-- ===== 尾页 ===== -->
+  <section class="title end_page">
+    <h1>下一步：你只需做两件事</h1>
+    <p>① 确认首个切入场景（推荐「学生日常学习」——规范查询 + 公式计算，随时可改）；② 把第一批正版规范与教材文件放入工作目录。之后阶段 1 的骨架搭建即可启动——搭完骨架立刻进入文件灌入，你会看到第一张真实卡片从你的文件里长出来。</p>
+    <p style="margin-top:12px;">配套文档：《油气储运NF痛点与解决方案汇总》（需求基线 · 定义务篇）｜ 本文（实施路线图 · 行动篇）</p>
+  </section>
+
+</body>
+</html>
